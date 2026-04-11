@@ -37,12 +37,16 @@ const Home = () => {
             transition={{ duration: 0.8 }}
             className="max-w-2xl"
           >
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 tracking-tighter">
-              {t('hero.title')} <br/>
+            <motion.h1 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6 tracking-tighter"
+            >  {t('hero.title')} <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">
                 {t('hero.luxury')}
               </span>
-            </h1>
+            </motion.h1>
             <p className="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed font-light">
               {t('hero.subtitle')}
             </p>

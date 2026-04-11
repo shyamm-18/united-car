@@ -147,9 +147,9 @@ const AdminFleetTracker = () => {
           zoomControl={false}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            className="grayscale dark:invert contrast-125 opacity-70"
+            attribution='&copy; Google Maps'
+            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            className="dark:opacity-80"
           />
 
           {filteredCars.map(car => (

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
-import { Plus, Edit, Trash2, X, Loader2, Search, Filter, CheckCircle, Car as CarIcon, Gauge, Fuel } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Loader2, Search, Filter, CheckCircle, Car as CarIcon, Gauge, Fuel, Upload, Camera, Image as ImageIcon } from 'lucide-react';
 import AdminLayout from '../components/layout/AdminLayout';
 
 const AdminFleet = () => {
@@ -10,6 +10,7 @@ const AdminFleet = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCar, setEditingCar] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Form State
   const [formData, setFormData] = useState({
@@ -55,6 +56,36 @@ const AdminFleet = () => {
       } catch (error) {
         console.error(error);
       }
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', file);
+
+    try {
+      const res = await fetch('http://localhost:5000/api/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: formDataUpload
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setFormData({ ...formData, image: data.url });
+      } else {
+        alert(data.message || 'Upload failed');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error uploading image');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -201,9 +232,61 @@ const AdminFleet = () => {
                       </div>
                    </div>
 
-                   <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Image Source URL</label>
-                      <input required value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white" placeholder="https://..." />
+                   <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Vehicle Identity (Image)</label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div className="relative group/upload h-48 rounded-[2.5rem] bg-slate-100 dark:bg-white/5 border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center overflow-hidden transition-all hover:border-blue-500/50">
+                            {formData.image ? (
+                               <>
+                                 <img src={formData.image} className="w-full h-full object-cover opacity-60 group-hover/upload:opacity-40 transition-opacity" alt="Preview" />
+                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <button 
+                                      type="button" 
+                                      onClick={() => document.getElementById('car-image-upload').click()}
+                                      className="p-4 bg-white dark:bg-slate-900 rounded-full shadow-2xl scale-0 group-hover/upload:scale-100 transition-transform text-blue-600"
+                                    >
+                                       <Camera className="h-6 w-6" />
+                                    </button>
+                                 </div>
+                               </>
+                            ) : (
+                               <button 
+                                 type="button" 
+                                 onClick={() => document.getElementById('car-image-upload').click()}
+                                 className="flex flex-col items-center gap-3 text-slate-400 hover:text-blue-500 transition-colors"
+                               >
+                                  <div className="p-5 bg-white dark:bg-slate-800 rounded-3xl shadow-sm">
+                                     {isUploading ? <Loader2 className="h-8 w-8 animate-spin" /> : <Upload className="h-8 w-8" />}
+                                  </div>
+                                  <span className="text-xs font-bold uppercase tracking-widest">Select from Gallery</span>
+                               </button>
+                            )}
+                            <input 
+                              id="car-image-upload"
+                              type="file" 
+                              hidden 
+                              accept="image/*"
+                              onChange={handleFileUpload}
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <div className="p-6 bg-blue-600/5 rounded-3xl border border-blue-600/10">
+                               <div className="flex items-center gap-2 text-blue-600 mb-2">
+                                  <ImageIcon className="h-4 w-4" />
+                                  <span className="text-[10px] font-black uppercase tracking-widest">URL Override</span>
+                               </div>
+                               <input 
+                                 value={formData.image} 
+                                 onChange={e => setFormData({...formData, image: e.target.value})} 
+                                 className="w-full bg-transparent border-none outline-none font-bold text-xs dark:text-white placeholder:text-slate-400" 
+                                 placeholder="Paste direct link (optional)" 
+                               />
+                            </div>
+                            <p className="text-[10px] text-slate-500 font-medium px-2 leading-relaxed">
+                               Upload high-resolution shots from your mobile gallery or laptop. Supported formats: JPG, PNG, WEBP.
+                            </p>
+                         </div>
+                      </div>
                    </div>
 
                    <div className="flex items-center justify-between p-6 bg-slate-100 dark:bg-white/5 rounded-[2.5rem] border border-slate-200 dark:border-white/10 shadow-inner">

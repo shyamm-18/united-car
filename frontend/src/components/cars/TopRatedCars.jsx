@@ -37,7 +37,7 @@ const TopRatedCars = () => {
             >
               <Award className="h-4 w-4" /> The Elite Collection
             </motion.div>
-            <h2 className="text-4xl md:text-6xl font-black mb-4 dark:text-white leading-[1.1] tracking-tighter">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 dark:text-white leading-[1.1] tracking-tighter">
               Discover Our <span className="text-blue-600">Top Rated</span> Vehicles
             </h2>
             <p className="text-lg text-slate-500 font-medium leading-relaxed">
@@ -52,7 +52,7 @@ const TopRatedCars = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {loading ? (
              [1, 2, 3].map(i => (
-               <div key={i} className="h-[550px] rounded-[4rem] bg-slate-200 dark:bg-slate-900 animate-pulse"></div>
+               <div key={i} className="h-[400px] sm:h-[550px] rounded-[4rem] bg-slate-200 dark:bg-slate-900 animate-pulse"></div>
              ))
           ) : topCars.map((car, idx) => (
              <motion.div 
@@ -61,7 +61,7 @@ const TopRatedCars = () => {
                whileInView={{ opacity: 1, y: 0 }}
                transition={{ delay: idx * 0.1 }}
                viewport={{ once: true }}
-               className="group relative h-[550px] rounded-[4rem] overflow-hidden shadow-2xl bg-white"
+               className="group relative h-[400px] sm:h-[550px] rounded-[4rem] overflow-hidden shadow-2xl bg-white"
              >
                 {/* Image Layer */}
                 <div className="absolute inset-0">

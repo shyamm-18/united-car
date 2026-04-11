@@ -65,7 +65,7 @@ const AICarFinder = () => {
   return (
     <div className="py-24 bg-white dark:bg-slate-950 relative overflow-hidden">
       {/* Background patterns */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] sm:w-[800px] h-[150vw] sm:h-[800px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="max-w-4xl mx-auto px-4 relative z-10">
         <header className="text-center mb-16">
@@ -76,7 +76,7 @@ const AICarFinder = () => {
           >
             <Sparkles className="h-4 w-4" /> AI CAR FINDER
           </motion.div>
-          <h2 className="text-4xl md:text-5xl font-black mb-4 dark:text-white">What are you looking for?</h2>
+          <h2 className="text-3xl md:text-5xl font-black mb-4 dark:text-white">What are you looking for?</h2>
           <p className="text-slate-500 dark:text-slate-400 font-medium">Let our AI concierge find the perfect match for your next journey.</p>
         </header>
 
@@ -97,7 +97,7 @@ const AICarFinder = () => {
                   <p className="text-slate-500">How much are you planning to spend per day?</p>
                 </div>
                 <div className="space-y-6">
-                   <div className="text-5xl font-black text-blue-600 text-center flex items-center justify-center gap-2">
+                   <div className="text-3xl sm:text-5xl font-black text-blue-600 text-center flex items-center justify-center gap-2">
                       <IndianRupee className="h-10 w-10" /> {budget.toLocaleString()}
                    </div>
                    <input 

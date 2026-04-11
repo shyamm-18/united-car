@@ -29,42 +29,7 @@ const LuxeChatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const generateResponse = (input) => {
-    const text = input.toLowerCase();
-    
-    // 1. Pricing Queries
-    if (text.includes('price') || text.includes('cost') || text.includes('rent')) {
-      const match = cars.find(c => text.includes(c.brand.toLowerCase()) || text.includes(c.model.toLowerCase()));
-      if (match) {
-        return `The ${match.brand} ${match.model} is available for ₹${match.pricePerDay} per day. Would you like me to take you to the detail page?`;
-      }
-      return "Our premium fleet starts from ₹50/day (Economy) up to ₹500/day for Luxury Sports. Which specific car are you interested in?";
-    }
 
-    // 2. Availability Queries
-    if (text.includes('available') || text.includes('free') || text.includes('status')) {
-      const match = cars.find(c => text.includes(c.brand.toLowerCase()) || text.includes(c.model.toLowerCase()));
-      if (match) {
-        return match.isAvailable 
-          ? `Yes, the ${match.brand} ${match.model} is currently available for your next trip! 🚗`
-          : `The ${match.brand} ${match.model} is currently on a journey, but we have similar models available.`;
-      }
-      return "Most of our elite fleet is available! You can check real-time status on our 'Fleet Map' on the homepage.";
-    }
-
-    // 3. Booking Help
-    if (text.includes('book') || text.includes('reserve') || text.includes('how to')) {
-      return "Booking is easy: \n1. Browse our fleet.\n2. Pick your favorite car.\n3. Choose your dates and location.\n4. Click 'Book Now' and complete the checkout!";
-    }
-
-    // 4. Greetings
-    if (text.includes('hi') || text.includes('hello') || text.includes('hey')) {
-      return "Hello! I'm here to assist you with your luxury car rental. What's on your mind?";
-    }
-
-    // Fallback
-    return "That's a great question! For specific inquiries, you can call our 24/7 VIP support at +1 (555) LUXE-DRIVE, or ask me about pricing and availability of specific cars.";
-  };
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -72,20 +37,42 @@ const LuxeChatbot = () => {
 
     const userMessage = { id: Date.now(), text: inputText, sender: 'user', time: new Date() };
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputText;
     setInputText('');
     setIsTyping(true);
 
-    // Simulate AI thinking
-    setTimeout(() => {
+    try {
+      const res = await fetch('http://localhost:5000/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          message: currentInput,
+          fleetData: cars 
+        }),
+      });
+      
+      const data = await res.json();
+      
       const aiResponse = { 
         id: Date.now() + 1, 
-        text: generateResponse(inputText), 
+        text: data.text || "I'm having trouble connecting to my intelligence core. Please try again in a moment.", 
         sender: 'ai', 
         time: new Date() 
       };
+      
       setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error("AI Interface Error:", error);
+      const errorMsg = { 
+        id: Date.now() + 1, 
+        text: "System Offline. Please ensure your OpenAI API Key is configured in the backend environment.", 
+        sender: 'ai', 
+        time: new Date() 
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -107,86 +94,111 @@ const LuxeChatbot = () => {
       </motion.button>
 
       {/* Chat Window */}
+      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-28 right-8 z-[100] w-[380px] h-[550px] bg-white/90 dark:bg-slate-950/90 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex flex-col overflow-hidden border border-slate-200 dark:border-white/10"
+            initial={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: 30, scale: 0.9, filter: 'blur(10px)' }}
+            className="fixed bottom-28 right-[5vw] sm:right-8 z-[100] w-[90vw] sm:w-[400px] h-[75vh] sm:h-[600px] bg-white/80 dark:bg-slate-950/80 backdrop-blur-3xl rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden border border-white/40 dark:border-white/10"
           >
-            {/* Header */}
-            <header className="p-6 bg-blue-600 text-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <div>
-                <h4 className="font-black text-sm uppercase tracking-widest">LuxeAssistant</h4>
-                <div className="flex items-center gap-1.5">
-                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                   <span className="text-[10px] font-bold opacity-80">AI Concierge Online</span>
+            {/* Glossy Header */}
+            <header className="relative p-7 bg-gradient-to-br from-blue-600 to-indigo-700 text-white overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 rotate-3 motion-safe:animate-pulse">
+                      <Bot className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-indigo-700 rounded-full shadow-lg h-inner"></div>
+                  </div>
+                  <div>
+                    <h4 className="font-black text-base uppercase tracking-tighter leading-none mb-1">UNITED Concierge</h4>
+                    <div className="flex items-center gap-1.5">
+                       <span className="text-[10px] font-bold opacity-90 uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded-md">AI POWERED</span>
+                    </div>
+                  </div>
                 </div>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
             </header>
 
-            {/* Messages */}
-            <div className="flex-grow overflow-y-auto p-6 space-y-4 scroll-smooth hide-scrollbar bg-slate-50/50 dark:bg-transparent">
+            {/* Premium Messages Area */}
+            <div className="flex-grow overflow-y-auto p-6 space-y-6 scroll-smooth hide-scrollbar bg-gradient-to-b from-slate-50/30 to-white/50 dark:from-transparent dark:to-transparent">
               {messages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] p-4 rounded-3xl text-sm font-medium ${
+                <motion.div 
+                  initial={{ opacity: 0, x: msg.sender === 'user' ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  key={msg.id} 
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`max-w-[85%] p-5 rounded-[2rem] text-[13px] font-bold leading-relaxed shadow-sm transition-all ${
                     msg.sender === 'user' 
-                      ? 'bg-blue-600 text-white rounded-tr-none shadow-lg' 
-                      : 'bg-white dark:bg-slate-900 dark:border dark:border-white/5 text-slate-800 dark:text-slate-200 rounded-tl-none shadow-sm'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-tr-none shadow-blue-500/20' 
+                      : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 text-slate-800 dark:text-slate-200 rounded-tl-none'
                   }`}>
-                    {msg.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+                    {msg.text.split('\n').map((line, i) => <p key={i} className="mb-1 last:mb-0">{line}</p>)}
                   </div>
-                </div>
+                </motion.div>
               ))}
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="bg-white dark:bg-slate-900 p-4 rounded-3xl rounded-tl-none flex gap-1 items-center shadow-sm">
-                    <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1 }} className="w-1.5 h-1.5 bg-slate-400 rounded-full"></motion.div>
-                    <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} className="w-1.5 h-1.5 bg-slate-400 rounded-full"></motion.div>
-                    <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} className="w-1.5 h-1.5 bg-slate-400 rounded-full"></motion.div>
+                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 p-5 rounded-3xl rounded-tl-none flex gap-1.5 items-center shadow-sm">
+                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1.5 h-1.5 bg-blue-500 rounded-full"></motion.div>
+                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.1 }} className="w-1.5 h-1.5 bg-blue-500 rounded-full"></motion.div>
+                    <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-1.5 h-1.5 bg-blue-500 rounded-full"></motion.div>
                   </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Suggested Tags */}
-            <div className="px-6 py-2 flex gap-2 overflow-x-auto hide-scrollbar border-t border-slate-100 dark:border-white/5">
+            {/* Smart Suggestions */}
+            <div className="px-6 py-3 flex gap-2 overflow-x-auto hide-scrollbar border-t border-slate-100 dark:border-white/5 glass-bg">
                 {[
-                  { tag: 'Pricing', icon: <DollarSign className="h-3 w-3" /> },
-                  { tag: 'How to Book', icon: <Calendar className="h-3 w-3" /> },
-                  { tag: 'Availability', icon: <Info className="h-3 w-3" /> }
+                  { tag: 'Rates & Fleet', icon: <DollarSign className="h-3 w-3" /> },
+                  { tag: 'Quick Booking', icon: <Calendar className="h-3 w-3" /> },
+                  { tag: 'Jaipur Location', icon: <Info className="h-3 w-3" /> }
                 ].map(item => (
                   <button 
                     key={item.tag}
                     onClick={() => { setInputText(item.tag); }}
-                    className="whitespace-nowrap px-4 py-1.5 rounded-full bg-slate-100 dark:bg-white/5 text-[10px] font-bold text-slate-500 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-600 transition-all flex items-center gap-1.5"
+                    className="whitespace-nowrap px-5 py-2 rounded-2xl bg-white dark:bg-white/5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2 border border-slate-100 dark:border-white/5 shadow-sm"
                   >
-                    {item.icon} {item.tag}
+                    {item.icon} {item.tag.toUpperCase()}
                   </button>
                 ))}
             </div>
 
-            {/* Input Area */}
-            <form onSubmit={handleSend} className="p-4 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-white/10 flex gap-2">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                placeholder="Ask me anything..."
-                className="flex-grow px-5 py-3 rounded-2xl bg-slate-100 dark:bg-white/5 outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium dark:text-white"
-              />
-              <button 
-                type="submit" 
-                className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white hover:bg-blue-700 transition-all shadow-lg"
-              >
-                <Send className="h-5 w-5" />
-              </button>
-            </form>
+            {/* Glossy Input Container */}
+            <div className="p-5 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-white/5">
+              <form onSubmit={handleSend} className="relative flex items-center">
+                <input
+                  type="text"
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  placeholder="Inquire about our elite fleet..."
+                  className="w-full pl-6 pr-16 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white shadow-inner"
+                />
+                <button 
+                  type="submit" 
+                  disabled={!inputText.trim() || isTyping}
+                  className="absolute right-2 w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-blue-500/30"
+                >
+                  <Send className="h-5 w-5" />
+                </button>
+              </form>
+              <p className="mt-3 text-[9px] text-center font-bold text-slate-400 uppercase tracking-widest">
+                Luxury Assistance Powered by Gemini 2.5
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

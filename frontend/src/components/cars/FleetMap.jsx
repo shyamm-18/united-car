@@ -36,7 +36,7 @@ const FleetMap = () => {
   const center = [19.0760, 72.8777]; // Mumbai center
 
   return (
-    <div className="h-[600px] w-full rounded-[3rem] overflow-hidden border-4 border-slate-100 dark:border-white/5 relative shadow-2xl">
+    <div className="h-[400px] md:h-[600px] w-full rounded-[3rem] overflow-hidden border-4 border-slate-100 dark:border-white/5 relative shadow-2xl">
       
       {/* UI Overlay */}
       <div className="absolute top-6 left-6 z-[1000] flex flex-col gap-4 max-w-sm w-full">
@@ -84,9 +84,9 @@ const FleetMap = () => {
         zoomControl={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          className="grayscale dark:invert contrast-125 opacity-90"
+          attribution='&copy; Google Maps'
+          url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+          className="dark:opacity-80"
         />
 
         {MOCK_CARS.slice(0, 8).map((car) => (

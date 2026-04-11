@@ -6,20 +6,13 @@ import { AuthContext } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import NotificationBell from './NotificationBell';
-import AdminLoginModal from '../auth/AdminLoginModal';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleAdminClick = (e) => {
-    e.preventDefault();
-    setIsAdminModalOpen(true);
-  };
 
   return (
     <motion.nav 
@@ -41,9 +34,9 @@ const Navbar = () => {
             <Link to="/" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.home')}</Link>
             <a href="/#fleet" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.fleet')}</a >
             <Link to="/unlimited" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.unlimited')}</Link>
-            <button onClick={handleAdminClick} className="font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-widest">
+            <Link to="/admin" className="font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-widest">
               Admin
-            </button>
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -110,21 +103,22 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: '100vh' }}
+            animate={{ opacity: 1, height: '100dvh' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="md:hidden fixed inset-0 top-20 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 z-40 overflow-y-auto"
+            className="md:hidden fixed inset-0 top-20 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 z-40 overflow-y-auto pb-24"
           >
             <div className="flex flex-col p-6 space-y-6 text-center">
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="text-xl font-bold dark:text-white">{t('nav.home')}</Link>
               <a onClick={() => setIsMobileMenuOpen(false)} href="/#fleet" className="text-xl font-bold dark:text-white">{t('nav.fleet')}</a>
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/unlimited" className="text-xl font-bold dark:text-white">{t('nav.unlimited')}</Link>
-              <button 
-                onClick={(e) => { setIsMobileMenuOpen(false); handleAdminClick(e); }} 
-                className="text-xl font-black text-blue-600 uppercase tracking-widest"
+              <Link 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                to="/admin"
+                className="text-xl font-black text-blue-600 uppercase tracking-widest block"
               >
                 Admin System
-              </button>
+              </Link>
               
               <hr className="border-slate-200 dark:border-white/10" />
 
@@ -156,7 +150,6 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <AdminLoginModal isOpen={isAdminModalOpen} onClose={() => setIsAdminModalOpen(false)} />
     </motion.nav>
   );
 };

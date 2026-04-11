@@ -10,7 +10,10 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 const { initCronJobs } = require('./utils/cronJobs');
+const path = require('path');
 
 dotenv.config();
 
@@ -31,6 +34,11 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/ai', aiRoutes);
+
+// Static uploads folder
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.get('/', (req, res) => {
   res.send('API is running...');

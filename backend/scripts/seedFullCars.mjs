@@ -31,7 +31,7 @@ const Car = mongoose.models.Car || mongoose.model('Car', carSchema);
 
 const seedDB = async () => {
   try {
-    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/car-rental';
+    const uri = process.env.MONGO_URI || 'mongodb://arebhai09_db_user:NZCA5SoBClOnmN7X@ac-rlb8k03-shard-00-00.anmnbzx.mongodb.net:27017,ac-rlb8k03-shard-00-01.anmnbzx.mongodb.net:27017,ac-rlb8k03-shard-00-02.anmnbzx.mongodb.net:27017/car-rental?ssl=true&replicaSet=atlas-lpurh9-shard-0&authSource=admin&appName=Cluster0';
     await mongoose.connect(uri);
     console.log('MongoDB Connected for FULL Seeding');
 

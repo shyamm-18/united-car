@@ -16,7 +16,7 @@ const connectDB = async () => {
     });
 
     // We use 127.0.0.1 instead of localhost for Node > 17 compatibility
-    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/car-rental';
+    const uri = process.env.MONGO_URI || 'mongodb://arebhai09_db_user:NZCA5SoBClOnmN7X@ac-rlb8k03-shard-00-00.anmnbzx.mongodb.net:27017,ac-rlb8k03-shard-00-01.anmnbzx.mongodb.net:27017,ac-rlb8k03-shard-00-02.anmnbzx.mongodb.net:27017/car-rental?ssl=true&replicaSet=atlas-lpurh9-shard-0&authSource=admin&appName=Cluster0';
     
     // Connect with timeout settings
     const conn = await mongoose.connect(uri, {

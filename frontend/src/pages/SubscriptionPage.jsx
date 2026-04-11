@@ -38,7 +38,7 @@ const SubscriptionPage = () => {
     <div className="pt-24 pb-24 bg-slate-50 dark:bg-slate-950 overflow-hidden">
       {/* Hero Section */}
       <section className="relative px-4 mb-24 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute top-0 right-0 w-[150vw] sm:w-[600px] h-[150vw] sm:h-[600px] bg-blue-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
         
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <motion.div 
@@ -48,7 +48,7 @@ const SubscriptionPage = () => {
           >
             <Sparkles className="h-4 w-4" /> LUXEDRIVE UNLIMITED
           </motion.div>
-          <h1 className="text-5xl md:text-8xl font-black dark:text-white mb-8 tracking-tighter">
+          <h1 className="text-4xl md:text-6xl lg:text-8xl font-black dark:text-white mb-8 tracking-tighter">
             Freedom without <br/> <span className="text-blue-600">Ownership.</span>
           </h1>
           <p className="max-w-2xl mx-auto text-xl text-slate-500 font-medium mb-12">
@@ -86,7 +86,7 @@ const SubscriptionPage = () => {
             </header>
 
             <div className="mb-10 flex items-baseline gap-2">
-               <span className="text-5xl font-black dark:text-white">₹{plan.price}</span>
+               <span className="text-4xl md:text-5xl font-black dark:text-white">₹{plan.price}</span>
                <span className="text-slate-400 font-bold text-sm tracking-widest">/ MONTH</span>
             </div>
 

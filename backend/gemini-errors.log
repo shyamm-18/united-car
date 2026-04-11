@@ -1,0 +1,56 @@
+[2026-04-11T12:43:34.599Z] Gemini API Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+Stack: Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+    at handleResponseNotOk (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async makeRequest (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at async generateContent (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at async D:\Downloads\car rental\backend\routes\aiRoutes.js:46:20
+
+[2026-04-11T12:45:41.967Z] Gemini API Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+Key Length: 39
+Partial Key: AIzaS...gJ0w
+Stack: Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [400 Bad Request] API key not valid. Please pass a valid API key. [{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]
+    at handleResponseNotOk (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async makeRequest (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at async generateContent (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at async D:\Downloads\car rental\backend\routes\aiRoutes.js:46:20
+
+[2026-04-11T13:02:39.461Z] Gemini API Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [403 Forbidden] Method doesn't allow unregistered callers (callers without established identity). Please use API Key or other form of API consumer identity to call this API.
+Key Length: 39
+Partial Key: AIzaS...RPDo
+Stack: Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [403 Forbidden] Method doesn't allow unregistered callers (callers without established identity). Please use API Key or other form of API consumer identity to call this API.
+    at handleResponseNotOk (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async makeRequest (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at async generateContent (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at async D:\Downloads\car rental\backend\routes\aiRoutes.js:54:20
+
+[2026-04-11T13:03:13.412Z] Gemini API Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [403 Forbidden] Method doesn't allow unregistered callers (callers without established identity). Please use API Key or other form of API consumer identity to call this API.
+Key Length: 39
+Partial Key: AIzaS...RPDo
+Stack: Error: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [403 Forbidden] Method doesn't allow unregistered callers (callers without established identity). Please use API Key or other form of API consumer identity to call this API.
+    at handleResponseNotOk (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:434:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async makeRequest (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:403:9)
+    at async generateContent (D:\Downloads\car rental\backend\node_modules\@google\generative-ai\dist\index.js:867:22)
+    at async D:\Downloads\car rental\backend\routes\aiRoutes.js:54:20
+
+[2026-04-11T13:40:28.430Z] Direct Gemini Error: models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Partial Key: AIzaS...RPDo
+
+[2026-04-11T13:47:02.485Z] Direct Gemini Error: models/gemini-1.5-flash is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Partial Key: AIzaS...RPDo
+
+[2026-04-11T13:48:00.344Z] Direct Gemini Error: models/gemini-1.5-flash is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Partial Key: AIzaS...RPDo
+
+[2026-04-11T13:54:04.580Z] Direct Gemini Error: models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Partial Key: AIzaS...RPDo
+
+[2026-04-11T13:55:39.499Z] Direct Gemini Error: models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Partial Key: AIzaS...RPDo
+
+[2026-04-11T13:56:07.027Z] Direct Gemini Error: models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+Partial Key: AIzaS...RPDo
+

@@ -249,9 +249,9 @@ const AdminDashboard = () => {
                </div>
                <ShieldCheck className="h-4 w-4 text-emerald-500" />
             </div>
-            <div className="h-[250px] w-full flex items-end gap-3 px-4">
+            <div className="h-[250px] w-full flex items-end gap-3 px-4 overflow-x-auto hide-scrollbar">
                {analytics.trends.users.slice(-7).map((day, i) => (
-                 <div key={i} className="flex-1 flex flex-col items-center gap-3 group">
+                 <div key={i} className="flex-1 min-w-[30px] flex flex-col items-center gap-3 group">
                     <div 
                       className="w-full bg-blue-600/30 rounded-t-xl transition-all group-hover:bg-blue-600 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]" 
                       style={{ height: `${(day.count / Math.max(...analytics.trends.users.map(u => u.count))) * 100}%` }}
