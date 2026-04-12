@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Users, Settings, Filter, ArrowLeft, CheckCircle, Shield, MapPin, X, CreditCard, Loader2, Calendar, Check } from 'lucide-react';
 import { MOCK_CARS } from '../data/cars';
 import { AuthContext } from '../context/AuthContext';
+import API_BASE_URL from '../config';
 import { ReviewList, ReviewForm } from '../components/cars/ReviewSystem';
 import { useTranslation } from 'react-i18next';
 import CarGallery from '../components/cars/CarGallery';
@@ -35,7 +36,7 @@ const CarDetail = () => {
   const fetchCar = useCallback(async () => {
     console.log("Detecting Car ID Profile:", id);
     try {
-      const res = await fetch(`http://localhost:5000/api/cars/${id}`);
+      const res = await fetch(`${API_BASE_URL}/api/cars/${id}`);
       if (res.ok) {
         const data = await res.json();
         console.log("Server Handshake Successful. Received Car:", data.model);
@@ -117,7 +118,7 @@ const CarDetail = () => {
     };
 
     try {
-      const res = await fetch(isMonthly ? 'http://localhost:5000/api/subscriptions' : 'http://localhost:5000/api/bookings', {
+      const res = await fetch(isMonthly ? `${API_BASE_URL}/api/subscriptions` : `${API_BASE_URL}/api/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

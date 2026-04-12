@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { Mail, Calendar, MapPin, User, Car, Clock, ArrowRight, TrendingUp, Search, Download } from 'lucide-react';
 import AdminLayout from '../components/layout/AdminLayout';
+import API_BASE_URL from '../config';
 
 const AdminBookings = () => {
   const { user } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const AdminBookings = () => {
     const fetchAllBookings = async () => {
       if (!user?.token) return;
       try {
-        const res = await fetch('http://localhost:5000/api/bookings', {
+        const res = await fetch(`${API_BASE_URL}/api/bookings`, {
           headers: { 'Authorization': `Bearer ${user.token}` }
         });
         const data = await res.json();
@@ -33,7 +34,7 @@ const AdminBookings = () => {
     
     try {
       const payload = type === 'start' ? { startKm: Number(kmValue) } : { endKm: Number(kmValue) };
-      const res = await fetch(`http://localhost:5000/api/bookings/${bookingId}/telemetry`, {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}/telemetry`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

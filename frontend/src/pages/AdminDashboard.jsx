@@ -12,6 +12,7 @@ import { useContext, useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Navigation from 'lucide-react/dist/esm/icons/navigation';
+import API_BASE_URL from '../config';
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
@@ -26,7 +27,7 @@ const AdminDashboard = () => {
         return () => clearTimeout(timer);
       }
       try {
-        const res = await fetch('http://localhost:5000/api/admin/stats', {
+        const res = await fetch(`${API_BASE_URL}/api/admin/stats`, {
           headers: { 'Authorization': `Bearer ${user.token}` }
         });
         const data = await res.json();

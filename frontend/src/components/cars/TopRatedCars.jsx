@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Star, ArrowRight, Award, ShieldCheck, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MOCK_CARS } from '../../data/cars';
+import API_BASE_URL from '../../config';
 
 const TopRatedCars = () => {
   const [topCars, setTopCars] = useState([]);
@@ -11,7 +12,7 @@ const TopRatedCars = () => {
   useEffect(() => {
     const fetchTopCars = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/cars/top');
+        const res = await fetch(`${API_BASE_URL}/api/cars/top`);
         if (res.ok) {
           const data = await res.json();
           setTopCars(data);

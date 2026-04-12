@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { Users, Trash2, Mail, Shield, User as UserIcon, Calendar, Search } from 'lucide-react';
 import AdminLayout from '../components/layout/AdminLayout';
+import API_BASE_URL from '../config';
 
 const AdminUsers = () => {
   const { user } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const AdminUsers = () => {
   const fetchUsers = async () => {
     if (!user?.token) return;
     try {
-      const res = await fetch('http://localhost:5000/api/auth/users', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users`, {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
       const data = await res.json();
@@ -32,7 +33,7 @@ const AdminUsers = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to remove this user from the platform?')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/auth/users/${id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/auth/users/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${user.token}` }
         });

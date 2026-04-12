@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, BellRing, CheckCircle2, Clock, Trash2, X, Info, AlertTriangle } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
+import API_BASE_URL from '../../config';
 
 const NotificationBell = () => {
   const { user } = useContext(AuthContext);
@@ -12,7 +13,7 @@ const NotificationBell = () => {
   const fetchNotifications = async () => {
     if (!user) return;
     try {
-      const res = await fetch('http://localhost:5000/api/notifications', {
+      const res = await fetch(`${API_BASE_URL}/api/notifications`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }
@@ -57,7 +58,7 @@ const NotificationBell = () => {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/notifications/${id}/read`, {
+      await fetch(`${API_BASE_URL}/api/notifications/${id}/read`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
@@ -69,7 +70,7 @@ const NotificationBell = () => {
 
   const clearAll = async () => {
     try {
-      await fetch('http://localhost:5000/api/notifications', {
+      await fetch(`${API_BASE_URL}/api/notifications`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${user.token}` }
       });

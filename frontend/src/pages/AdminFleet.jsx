@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { Plus, Edit, Trash2, X, Loader2, Search, Filter, CheckCircle, Car as CarIcon, Gauge, Fuel, Upload, Camera, Image as ImageIcon } from 'lucide-react';
 import AdminLayout from '../components/layout/AdminLayout';
+import API_BASE_URL from '../config';
 
 const AdminFleet = () => {
   const { user } = useContext(AuthContext);
@@ -19,7 +20,7 @@ const AdminFleet = () => {
 
   const fetchCars = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/cars');
+      const res = await fetch(`${API_BASE_URL}/api/cars`);
       const data = await res.json();
       setCars(data);
     } catch (error) {
@@ -48,7 +49,7 @@ const AdminFleet = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this car?')) {
       try {
-        await fetch(`http://localhost:5000/api/cars/${id}`, {
+        await fetch(`${API_BASE_URL}/api/cars/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${user.token}` }
         });
@@ -68,7 +69,7 @@ const AdminFleet = () => {
     formDataUpload.append('image', file);
 
     try {
-      const res = await fetch('http://localhost:5000/api/upload', {
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${user.token}`
@@ -93,8 +94,8 @@ const AdminFleet = () => {
     e.preventDefault();
     const method = editingCar ? 'PUT' : 'POST';
     const url = editingCar 
-      ? `http://localhost:5000/api/cars/${editingCar._id}` 
-      : 'http://localhost:5000/api/cars';
+      ? `${API_BASE_URL}/api/cars/${editingCar._id}` 
+      : `${API_BASE_URL}/api/cars`;
 
     try {
       await fetch(url, {

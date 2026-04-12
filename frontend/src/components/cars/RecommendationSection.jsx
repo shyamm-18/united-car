@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Sparkles, Star, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
+import API_BASE_URL from '../../config';
 
 const RecommendationSection = () => {
   const { user } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const RecommendationSection = () => {
     const fetchRecommendations = async () => {
       try {
         const headers = user ? { 'Authorization': `Bearer ${user.token}` } : {};
-        const res = await fetch('http://localhost:5000/api/cars/recommendations', { headers });
+        const res = await fetch(`${API_BASE_URL}/api/cars/recommendations`, { headers });
         const data = await res.json();
         if (Array.isArray(data)) {
           setRecommendations(data);

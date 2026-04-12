@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, MessageSquare, Send, User, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
+import API_BASE_URL from '../../config';
 
 export const ReviewList = ({ carId }) => {
   const [reviews, setReviews] = useState([]);
@@ -10,7 +11,7 @@ export const ReviewList = ({ carId }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/reviews/car/${carId}`);
+        const res = await fetch(`${API_BASE_URL}/api/reviews/car/${carId}`);
         const data = await res.json();
         setReviews(data);
       } catch (error) {
@@ -84,7 +85,7 @@ export const ReviewForm = ({ carId, onReviewAdded }) => {
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:5000/api/reviews', {
+      const res = await fetch(`${API_BASE_URL}/api/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

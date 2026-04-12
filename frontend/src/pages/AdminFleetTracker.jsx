@@ -8,6 +8,7 @@ import {
   ArrowRight, Gauge, Droplets, Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config';
 
 // Icon Setup
 const carIconNormal = new L.DivIcon({
@@ -39,7 +40,7 @@ const AdminFleetTracker = () => {
   useEffect(() => {
     const fetchFleet = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/cars');
+        const res = await fetch(`${API_BASE_URL}/api/cars`);
         const data = await res.json();
         // Simulate cars scattered around Jaipur HQ
         const jaipurData = data.map(car => ({

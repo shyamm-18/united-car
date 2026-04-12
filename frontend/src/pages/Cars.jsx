@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Star, Filter, Search, ChevronDown, User, Settings } from 'lucide-react';
 import { MOCK_CARS } from '../data/cars';
+import API_BASE_URL from '../config';
 
 const Cars = ({ inSinglePage }) => {
   const [cars, setCars] = useState([]);
@@ -12,7 +13,7 @@ const Cars = ({ inSinglePage }) => {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/cars');
+        const res = await fetch(`${API_BASE_URL}/api/cars`);
         if (res.ok) {
           const data = await res.json();
           setCars(data.length > 0 ? data : MOCK_CARS); 

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { Calendar, Clock, Car, CreditCard, ChevronRight, XCircle, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config';
 
 const MyBookings = () => {
   const { user } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const MyBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/bookings/my-bookings', {
+      const res = await fetch(`${API_BASE_URL}/api/bookings/my-bookings`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }
@@ -31,7 +32,7 @@ const MyBookings = () => {
 
   const fetchSubscriptions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/subscriptions/my', {
+      const res = await fetch(`${API_BASE_URL}/api/subscriptions/my`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }
@@ -55,7 +56,7 @@ const MyBookings = () => {
   const handleCancel = async (id) => {
     if (window.confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
       try {
-        const res = await fetch(`http://localhost:5000/api/bookings/${id}/cancel`, {
+        const res = await fetch(`${API_BASE_URL}/api/bookings/${id}/cancel`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${user.token}`

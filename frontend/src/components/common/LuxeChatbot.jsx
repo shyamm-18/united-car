@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Sparkles, Loader2, Bot, Info, Calendar, DollarSign } from 'lucide-react';
+import API_BASE_URL from '../../config';
 
 const LuxeChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,7 @@ const LuxeChatbot = () => {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/cars');
+        const res = await fetch(`${API_BASE_URL}/api/cars`);
         const data = await res.json();
         setCars(data);
       } catch (err) {
@@ -42,7 +43,7 @@ const LuxeChatbot = () => {
     setIsTyping(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/ai/chat', {
+      const res = await fetch(`${API_BASE_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
