@@ -41,7 +41,7 @@ router.post('/chat', chatLimiter, async (req, res) => {
       console.error("Gemini Error Data:", JSON.stringify(data));
       // Fallback response for leaked API keys or quota issues
       return res.json({ 
-        text: "I am the UNITED CAR AI Concierge. My connection to the central intelligence network is currently undergoing maintenance. However, you can explore our Elite Fleet or contact our VIP support for immediate assistance.",
+        text: `Error from Google: ${JSON.stringify(data)}`,
         isFallback: true
       });
     }
