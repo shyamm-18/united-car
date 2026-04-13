@@ -8,9 +8,9 @@ const { createNotification } = require('./notificationController');
 // @access  Private
 const addBookingItems = async (req, res) => {
   try {
-    const { carId, startDate, endDate, totalPrice, addons } = req.body;
+    const { carId, startDate, endDate, totalPrice, pickupLocation, addons } = req.body;
 
-    if (!carId || !startDate || !endDate || !totalPrice) {
+    if (!carId || !startDate || !endDate || !totalPrice || !pickupLocation) {
       return res.status(400).json({ message: 'Missing required booking information' });
     }
 
@@ -20,6 +20,7 @@ const addBookingItems = async (req, res) => {
       startDate,
       endDate,
       totalPrice,
+      pickupLocation,
       addons,
     });
 

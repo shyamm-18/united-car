@@ -94,6 +94,7 @@ const CarDetail = () => {
       return;
     }
     if (isMonthly) {
+       setPaymentMethod('monthly');
        setIsModalOpen(true);
        return;
     }
@@ -103,9 +104,10 @@ const CarDetail = () => {
     }
     setIsModalOpen(true);
   };
+  
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'pickup' or 'card'
 
-  const handlePayment = async (e) => {
-    e.preventDefault();
+  const handlePayment = async (method) => {
     setIsProcessing(true);
     
     const bookingData = {
@@ -114,7 +116,8 @@ const CarDetail = () => {
       endDate,
       totalPrice,
       pickupLocation,
-      addons: selectedAddons
+      addons: selectedAddons,
+      paymentMethod: method
     };
 
     try {
@@ -127,17 +130,21 @@ const CarDetail = () => {
         body: JSON.stringify(isMonthly ? { carId: car?._id, price: car?.monthlyPrice || 45000 } : bookingData)
       });
       
-      setTimeout(() => {
-         setIsProcessing(false);
-         setIsModalOpen(false);
-         navigate('/success', { state: { car, bookingData } });
-      }, 2000);
+      const data = await res.json();
+      
+      if (res.ok) {
+        setTimeout(() => {
+           setIsProcessing(false);
+           setIsModalOpen(false);
+           navigate('/success', { state: { car, bookingData } });
+        }, 2000);
+      } else {
+        setIsProcessing(false);
+        alert(data.message || 'Booking failed');
+      }
     } catch (error) {
-       setTimeout(() => {
-         setIsProcessing(false);
-         setIsModalOpen(false);
-         navigate('/success', { state: { car, bookingData } });
-       }, 2000);
+       setIsProcessing(false);
+       alert('Network error. Please try again.');
     }
   };
 
@@ -236,18 +243,33 @@ const CarDetail = () => {
                   <span className="text-slate-500 font-medium ml-2">/ {isMonthly ? 'month' : 'day'}</span>
               </div>
 
-              {/* ... Dates and booking logic (Simplified for stability) ... */}
               {!isMonthly && (
                 <div className="space-y-4 mb-8">
                    <div className="space-y-2">
                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                       <Calendar className="h-3 w-3" /> Drop-in Date (Pickup)
+                       <MapPin className="h-3 w-3 text-blue-500" /> Pickup Location
+                     </label>
+                     <select 
+                       value={pickupLocation} 
+                       onChange={(e) => setPickupLocation(e.target.value)}
+                       className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white appearance-none"
+                     >
+                       <option disabled value="Select Pickup Location">Select Location</option>
+                       <option value="Delhi Airport (T3)">Delhi Airport (T3)</option>
+                       <option value="Luxury Hub - South Delhi">Luxury Hub - South Delhi</option>
+                       <option value="Gurgaon Elite Center">Gurgaon Elite Center</option>
+                       <option value="Noida Premium Lounge">Noida Premium Lounge</option>
+                     </select>
+                   </div>
+                   <div className="space-y-2">
+                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                       <Calendar className="h-3 w-3" /> Start Date
                      </label>
                      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white" />
                    </div>
                    <div className="space-y-2">
                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                       <Calendar className="h-3 w-3 text-blue-500" /> Drop-out Date (Return)
+                       <Calendar className="h-3 w-3 text-blue-500" /> End Date
                      </label>
                      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white" />
                    </div>
@@ -279,13 +301,64 @@ const CarDetail = () => {
       <AnimatePresence>
         {isModalOpen && (
            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass p-10 rounded-[3rem] bg-white dark:bg-slate-900 max-w-lg w-full text-center">
-                 <h2 className="text-3xl font-black mb-8 dark:text-white">Confirm Reservation</h2>
-                 <p className="mb-8 text-slate-500">Processing booking for {car?.brand} {car?.model}.</p>
-                 <button onClick={handlePayment} className="w-full py-5 rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3">
-                    {isProcessing ? <Loader2 className="animate-spin" /> : `Ready to Pay ₹${totalPrice}`}
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass p-8 rounded-[2.5rem] bg-white dark:bg-slate-900 max-w-lg w-full">
+                 {!paymentMethod ? (
+                   <>
+                     <h2 className="text-2xl font-black mb-6 dark:text-white">Secure Checkout</h2>
+                     <div className="space-y-4 mb-8">
+                        <button 
+                          onClick={() => setPaymentMethod('pickup')}
+                          className="w-full p-6 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-blue-500 transition-all text-left flex items-center justify-between group"
+                        >
+                          <div>
+                            <div className="font-bold dark:text-white">Pay at Pickup</div>
+                            <div className="text-xs text-slate-500">Fast concierge delivery</div>
+                          </div>
+                          <Check className="h-5 w-5 text-blue-500 opacity-0 group-hover:opacity-100" />
+                        </button>
+
+                        <button 
+                          onClick={() => setPaymentMethod('card')}
+                          className="w-full p-6 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-blue-500 transition-all text-left flex items-center justify-between group"
+                        >
+                          <div>
+                            <div className="font-bold dark:text-white">Credit / Debit Card</div>
+                            <div className="text-xs text-slate-500">Secure digital encryption</div>
+                          </div>
+                          <CreditCard className="h-5 w-5 text-blue-500 opacity-0 group-hover:opacity-100" />
+                        </button>
+                     </div>
+                   </>
+                 ) : (
+                   <div className="text-center">
+                     <h2 className="text-2xl font-black mb-4 dark:text-white">Confirm Booking</h2>
+                     <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl mb-8 text-left">
+                        <div className="flex justify-between mb-2">
+                          <span className="text-slate-500 text-xs">Vehicle</span>
+                          <span className="font-bold dark:text-white">{car?.brand} {car?.model}</span>
+                        </div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-slate-500 text-xs">Location</span>
+                          <span className="font-bold dark:text-white">{pickupLocation}</span>
+                        </div>
+                        <div className="flex justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
+                          <span className="font-black dark:text-white">Total Amount</span>
+                          <span className="font-black text-blue-600">₹{totalPrice.toLocaleString()}</span>
+                        </div>
+                     </div>
+                     <button 
+                        onClick={() => handlePayment(paymentMethod)} 
+                        disabled={isProcessing}
+                        className="w-full py-5 rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 disabled:opacity-70"
+                     >
+                        {isProcessing ? <Loader2 className="animate-spin" /> : 'Finish & Book Now'}
+                     </button>
+                     <button onClick={() => setPaymentMethod(null)} className="mt-4 text-xs font-bold text-slate-400">Changed my mind (Back)</button>
+                   </div>
+                 )}
+                 <button onClick={() => { setIsModalOpen(false); setPaymentMethod(null); }} className="absolute h-10 w-10 top-6 right-6 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors">
+                   <X className="h-5 w-5" />
                  </button>
-                 <button onClick={() => setIsModalOpen(false)} className="mt-6 text-sm font-bold text-slate-400 hover:text-slate-600">Cancel</button>
               </motion.div>
            </div>
         )}
