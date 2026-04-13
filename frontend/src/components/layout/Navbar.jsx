@@ -13,6 +13,16 @@ const Navbar = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const handleAdminProtect = (e) => {
+    e.preventDefault();
+    const pass = window.prompt("Admin Access Code Required:");
+    if (pass === "9216497682") {
+      navigate('/admin');
+    } else {
+      alert("Unauthorized Access!");
+    }
+  };
 
   return (
     <motion.nav 
@@ -34,7 +44,11 @@ const Navbar = () => {
             <Link to="/" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.home')}</Link>
             <a href="/#fleet" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.fleet')}</a >
             <Link to="/unlimited" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.unlimited')}</Link>
-            <Link to="/admin" className="font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-widest">
+            <Link 
+              to="/admin" 
+              onClick={handleAdminProtect}
+              className="font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-widest"
+            >
               Admin
             </Link>
           </div>
@@ -46,7 +60,11 @@ const Navbar = () => {
                   <User className="h-5 w-5 mr-2" /> {user.name}
                 </Link>
                 {user.role === 'admin' && (
-                  <Link to="/admin" className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-xl hover:scale-105 transition-transform">
+                  <Link 
+                    to="/admin" 
+                    onClick={handleAdminProtect}
+                    className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-xl hover:scale-105 transition-transform"
+                  >
                     Dashboard
                   </Link>
                 )}
@@ -113,7 +131,7 @@ const Navbar = () => {
               <a onClick={() => setIsMobileMenuOpen(false)} href="/#fleet" className="text-xl font-bold dark:text-white">{t('nav.fleet')}</a>
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/unlimited" className="text-xl font-bold dark:text-white">{t('nav.unlimited')}</Link>
               <Link 
-                onClick={() => setIsMobileMenuOpen(false)} 
+                onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
                 to="/admin"
                 className="text-xl font-black text-blue-600 uppercase tracking-widest block"
               >
@@ -127,7 +145,13 @@ const Navbar = () => {
                   <div className="text-sm font-bold text-slate-500 uppercase flex justify-center items-center gap-2"><User className="h-5 w-5"/> {user.name}</div>
                   <Link onClick={() => setIsMobileMenuOpen(false)} to="/my-bookings" className="text-xl font-bold dark:text-white">My Reservations</Link>
                   {user.role === 'admin' && (
-                    <Link onClick={() => setIsMobileMenuOpen(false)} to="/admin" className="text-xl font-black text-blue-500 uppercase">Command Center</Link>
+                    <Link 
+                      onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
+                      to="/admin" 
+                      className="text-xl font-black text-blue-500 uppercase"
+                    >
+                      Command Center
+                    </Link>
                   )}
                   <button 
                     onClick={() => { setIsMobileMenuOpen(false); logout(); }} 
