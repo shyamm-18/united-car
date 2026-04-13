@@ -61,7 +61,7 @@ const Navbar = () => {
                 <Link to="/my-bookings" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors flex items-center">
                   <User className="h-5 w-5 mr-2" /> {user.name}
                 </Link>
-                {user.role === 'admin' && (
+                {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
                   <Link 
                     to="/admin" 
                     onClick={handleAdminProtect}
@@ -148,7 +148,7 @@ const Navbar = () => {
                 <div className="flex flex-col space-y-6">
                   <div className="text-sm font-bold text-slate-500 uppercase flex justify-center items-center gap-2"><User className="h-5 w-5"/> {user.name}</div>
                   <Link onClick={() => setIsMobileMenuOpen(false)} to="/my-bookings" className="text-xl font-bold dark:text-white">My Reservations</Link>
-                  {user.role === 'admin' && (
+                  {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
                     <Link 
                       onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
                       to="/admin" 
