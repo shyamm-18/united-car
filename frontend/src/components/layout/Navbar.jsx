@@ -44,13 +44,15 @@ const Navbar = () => {
             <Link to="/" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.home')}</Link>
             <a href="/#fleet" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.fleet')}</a >
             <Link to="/unlimited" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.unlimited')}</Link>
-            <Link 
-              to="/admin" 
-              onClick={handleAdminProtect}
-              className="font-bold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-widest"
-            >
-              Admin
-            </Link>
+            {user?.email === 'arebhai09@gmail.com' && (
+              <Link 
+                to="/admin" 
+                onClick={handleAdminProtect}
+                className="font-extrabold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-[0.2em] bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-lg"
+              >
+                Admin
+              </Link>
+            )}
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -130,13 +132,15 @@ const Navbar = () => {
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="text-xl font-bold dark:text-white">{t('nav.home')}</Link>
               <a onClick={() => setIsMobileMenuOpen(false)} href="/#fleet" className="text-xl font-bold dark:text-white">{t('nav.fleet')}</a>
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/unlimited" className="text-xl font-bold dark:text-white">{t('nav.unlimited')}</Link>
-              <Link 
-                onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
-                to="/admin"
-                className="text-xl font-black text-blue-600 uppercase tracking-widest block"
-              >
-                Admin System
-              </Link>
+              {user?.email === 'arebhai09@gmail.com' && (
+                <Link 
+                  onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
+                  to="/admin"
+                  className="text-xl font-black text-blue-600 uppercase tracking-widest block bg-blue-50 dark:bg-blue-900/20 py-3 rounded-2xl"
+                >
+                  Admin System
+                </Link>
+              )}
               
               <hr className="border-slate-200 dark:border-white/10" />
 
