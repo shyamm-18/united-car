@@ -137,7 +137,7 @@ const CarDetail = () => {
            setIsProcessing(false);
            setIsModalOpen(false);
            navigate('/success', { state: { car, bookingData } });
-        }, 2000);
+        }, 5000);
       } else {
         setIsProcessing(false);
         alert(data.message || 'Booking failed');

@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle2, Calendar, MapPin, ArrowRight, Home } from 'lucide-react';
-import { useEffect } from 'react';
 import { useEffect, useState } from 'react';
 
 const BookingSuccess = () => {
