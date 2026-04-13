@@ -69,30 +69,21 @@ const AdminFleet = () => {
     if (!file) return;
 
     setIsUploading(true);
-    const formDataUpload = new FormData();
-    formDataUpload.append('image', file);
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        },
-        body: formDataUpload
-      });
-      const data = await res.json();
-      if (res.ok) {
-        if (type === 'main') setFormData({ ...formData, image: data.url });
-        if (type === 'gallery') setTempGalleryItem(prev => ({ ...prev, url: data.url }));
-        if (type === '360') setTemp360Url(data.url);
-      } else {
-        alert(data.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error(error);
-      alert('Error uploading image');
-    } finally {
-      setIsUploading(false);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+       const base64data = reader.result;
+       
+       if (type === 'main') setFormData({ ...formData, image: base64data });
+       if (type === 'gallery') setTempGalleryItem(prev => ({ ...prev, url: base64data }));
+       if (type === '360') setTemp360Url(base64data);
+       
+       setIsUploading(false);
+    };
+    reader.onerror = () => {
+       alert("Error processing local file for upload");
+       setIsUploading(false);
     }
   };
 
