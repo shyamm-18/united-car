@@ -18,6 +18,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
+      role: email === 'arebhai09@gmail.com' ? 'admin' : 'user',
     });
 
     if (user) {
@@ -44,6 +45,12 @@ const loginUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
+    
+    // Auto-promote special master admin email
+    if (user && user.email === 'arebhai09@gmail.com' && user.role !== 'admin') {
+      user.role = 'admin';
+      await user.save();
+    }
 
     if (user && (await user.matchPassword(password))) {
       res.json({

