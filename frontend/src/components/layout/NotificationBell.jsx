@@ -9,6 +9,8 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const prevUnreadCount = useRef(0);
+  const audioRef = useRef(new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'));
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -45,6 +47,22 @@ const NotificationBell = () => {
       return () => clearInterval(interval);
     }
   }, [user]);
+
+  // Handle Sound Trigger
+  useEffect(() => {
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+    
+    // If unread count increased, play sound
+    if (unreadCount > prevUnreadCount.current) {
+      // Only play if it's not the initial load (prevUnreadCount initialized at 0 is tricky, 
+      // but we only want to ding on NEW ones after first fetch)
+      if (prevUnreadCount.current > 0 || notifications.length > 0) {
+        audioRef.current.play().catch(e => console.log("Audio play blocked by browser policy until user interaction."));
+      }
+    }
+    
+    prevUnreadCount.current = unreadCount;
+  }, [notifications]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
