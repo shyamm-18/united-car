@@ -38,7 +38,11 @@ router.post('/chat', chatLimiter, async (req, res) => {
     
     if (!response.ok) {
       console.error("Gemini Error Data:", JSON.stringify(data));
-      return res.status(response.status).json({ text: "Error from Google API." });
+      // Fallback response for leaked API keys or quota issues
+      return res.json({ 
+        text: "I am the UNITED CAR AI Concierge. My connection to the central intelligence network is currently undergoing maintenance. However, you can explore our Elite Fleet or contact our VIP support for immediate assistance.",
+        isFallback: true
+      });
     }
 
     const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I am offline. Please try again later.";
