@@ -9,7 +9,7 @@ const carSchema = mongoose.Schema(
     image: { type: String, required: true },
     seats: { type: Number, required: true },
     transmission: { type: String, required: true, enum: ['Automatic', 'Manual'] },
-    fuel: { type: String, required: true, enum: ['Petrol', 'Diesel', 'Electric', 'Hybrid'] },
+    fuel: { type: String, required: true, enum: ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'CNG'] },
     rating: { type: Number, default: 0 },
     numReviews: { type: Number, default: 0 },
     averageRating: { type: Number, default: 0 },

@@ -37,9 +37,11 @@ const upload = multer({
 
 router.post('/', upload.single('image'), (req, res) => {
   if (req.file) {
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.get('host');
     res.send({
       message: 'Image uploaded',
-      url: `http://localhost:5000/${req.file.path.replace(/\\/g, '/')}`
+      url: `${protocol}://${host}/${req.file.path.replace(/\\/g, '/')}`
     });
   } else {
     res.status(400).send({ message: 'No file uploaded' });

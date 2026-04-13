@@ -322,7 +322,7 @@ const AdminFleet = () => {
                       <div className="space-y-2">
                          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Fuel</label>
                          <select value={formData.fuel} onChange={e => setFormData({...formData, fuel: e.target.value})} className="w-full px-4 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white">
-                            <option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option>
+                            <option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option><option>CNG</option>
                          </select>
                       </div>
                    </div>
