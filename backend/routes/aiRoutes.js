@@ -22,8 +22,9 @@ router.post('/chat', chatLimiter, async (req, res) => {
 
   try {
     console.log("Fetching from Gemini 2.5 Flash...");
+    const apiKeyToUse = "AIzaSyCprb64BcgLgoZgP5-7WDh-NO78gAdjoLA";
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKeyToUse}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
