@@ -2,16 +2,34 @@ import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle2, Calendar, MapPin, ArrowRight, Home } from 'lucide-react';
 import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const BookingSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { car, bookingData } = location.state || {};
 
+  const [countdown, setCountdown] = useState(5);
+  
   useEffect(() => {
     if (!car || !bookingData) {
       navigate('/');
+      return;
     }
+
+    // Auto-redirect timer
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    const redirect = setTimeout(() => {
+      navigate('/');
+    }, 5000);
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(redirect);
+    };
   }, [car, bookingData, navigate]);
 
   if (!car || !bookingData) return null;
@@ -37,10 +55,16 @@ const BookingSuccess = () => {
           <CheckCircle2 className="h-14 w-14 text-green-500" />
         </motion.div>
 
-        <h1 className="text-4xl md:text-5xl font-black mb-4 dark:text-white">Booking Confirmed!</h1>
-        <p className="text-lg text-slate-500 dark:text-slate-400 mb-10">
-          Pack your bags! Your {car.brand} {car.model} is reserved and waiting for you.
+        <h1 className="text-4xl md:text-5xl font-black mb-4 dark:text-white leading-tight">💪 Congratulations! <br/>Your Luxe Ride is Ready</h1>
+        <p className="text-lg text-slate-500 dark:text-slate-400 mb-6">
+          Everything is set! Your {car.brand} {car.model} is reserved and waiting for you.
         </p>
+        
+        <div className="mb-10 flex flex-col items-center justify-center">
+          <div className="px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-[0.2em] animate-pulse">
+            Redirecting to Home in {countdown}s...
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 text-left">
            <div className="bg-slate-100 dark:bg-white/5 p-6 rounded-3xl">

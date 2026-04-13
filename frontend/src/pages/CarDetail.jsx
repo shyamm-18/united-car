@@ -349,9 +349,14 @@ const CarDetail = () => {
                      <button 
                         onClick={() => handlePayment(paymentMethod)} 
                         disabled={isProcessing}
-                        className="w-full py-5 rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 disabled:opacity-70"
+                        className="w-full py-5 rounded-2xl bg-blue-600 text-white font-black text-xl hover:bg-blue-700 shadow-xl shadow-blue-500/20 flex flex-col items-center justify-center gap-1 disabled:opacity-70"
                      >
-                        {isProcessing ? <Loader2 className="animate-spin" /> : 'Finish & Book Now'}
+                        {isProcessing ? (
+                          <>
+                            <Loader2 className="animate-spin" />
+                            <span className="text-[10px] uppercase tracking-widest opacity-80">Securing your reservation...</span>
+                          </>
+                        ) : 'Finish & Book Now'}
                      </button>
                      <button onClick={() => setPaymentMethod(null)} className="mt-4 text-xs font-bold text-slate-400">Changed my mind (Back)</button>
                    </div>
