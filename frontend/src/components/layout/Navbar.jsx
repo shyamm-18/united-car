@@ -111,8 +111,19 @@ const Navbar = () => {
             {user && <NotificationBell />}
           </div>
 
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-800 dark:text-white">
+          <div className="md:hidden flex items-center space-x-2">
+            <motion.button 
+              whileTap={{ scale: 0.9 }}
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-yellow-400"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </motion.button>
+            
+            {user && <NotificationBell />}
+
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 ml-1 text-slate-800 dark:text-white">
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
