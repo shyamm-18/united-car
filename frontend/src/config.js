@@ -1,7 +1,9 @@
 // Centralized API Base URL
-// In production, this will be the URL of your Render backend.
-// Locally, it defaults to http://localhost:5000
+const API_BASE_URL = 'https://united-car.onrender.com';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://united-car.onrender.com';
+console.log('🚀 UNTED CAR API CONFIG:', {
+  URL: API_BASE_URL,
+  mode: import.meta.env.MODE
+});
 
 export default API_BASE_URL;

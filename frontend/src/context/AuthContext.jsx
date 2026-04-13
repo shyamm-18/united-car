@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
+    console.log('🔑 Attempting Login to:', `${API_BASE_URL}/api/auth/login`);
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
@@ -29,10 +30,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('userInfo', JSON.stringify(data));
         return { success: true };
       } else {
+        console.error('❌ Login API Error:', data.message);
         return { success: false, message: data.message };
       }
     } catch (error) {
-      return { success: false, message: 'Server not responding. Start MongoDB and Backend.' };
+      console.error('🚨 Network Failure during Login:', error);
+      return { success: false, message: `Connection Failed to ${API_BASE_URL}. Check if Backend is up.` };
     }
   };
 
