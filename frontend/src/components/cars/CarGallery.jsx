@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw, Maximize2, Camera, Box, ChevronLeft, ChevronRight, Info, Zap } from 'lucide-react';
 
 const CarGallery = ({ car }) => {
-  const [activeTab, setActiveTab] = useState('360'); 
+  const [activeTab, setActiveTab] = useState('gallery'); 
   const [viewMode, setViewMode] = useState('Exterior'); 
   
   // 360 State

@@ -38,6 +38,21 @@ const galleryMap = {
     'FRONX': [
         { url: '/uploads/fronx.png', category: 'Exterior' },
         { url: '/uploads/fronx_interior.png', category: 'Interior' }
+    ],
+    'GLANZA': [
+        { url: '/uploads/glanza.png', category: 'Exterior' }
+    ],
+    'SCORPIO N': [
+        { url: '/uploads/scorpio_n.png', category: 'Exterior' }
+    ],
+    'SCORPIO CLASSIC': [
+        { url: '/uploads/scorpio_classic.png', category: 'Exterior' }
+    ],
+    'THAR ROXX': [
+        { url: '/uploads/thar_roxx.png', category: 'Exterior' }
+    ],
+    'ALTO': [
+        { url: '/uploads/alto.png', category: 'Exterior' }
     ]
 };
 
@@ -50,7 +65,7 @@ async function migrate() {
         const cars = await Car.find({});
         console.log(`Found ${cars.length} cars. Starting Intelligent Mapping...`);
 
-        // Sort keys by length DESC to match more specific strings first (e.g., 'THAR ROXX' before 'THAR')
+        // Sort keys by length DESC to match more specific strings first
         const sortedKeys = Object.keys(imageMap).sort((a, b) => b.length - a.length);
 
         for (let car of cars) {
@@ -75,16 +90,15 @@ async function migrate() {
             if (matchedImage) {
                 car.image = `${BASE_URL}/uploads/${matchedImage}`;
                 updated = true;
-                console.log(`  -> Match Found: ${matchedImage}`);
-            } else {
-                console.log(`  !! No Match Found`);
+                console.log(`  -> Main Image Updated: ${matchedImage}`);
             }
 
             // Find best gallery match
             let matchedGallery = null;
-            for (let [key, val] of Object.entries(galleryMap)) {
+            // First check by model/brand for custom galleries
+            for (let key of sortedKeys) {
                 if (combined.includes(key) || brand.includes(key) || model.includes(key)) {
-                    matchedGallery = val;
+                    matchedGallery = galleryMap[key];
                     break;
                 }
             }
@@ -95,7 +109,15 @@ async function migrate() {
                     category: item.category
                 }));
                 updated = true;
-                console.log(`  -> Gallery Injected`);
+                console.log(`  -> Gallery Injected (Count: ${matchedGallery.length})`);
+            } else if (matchedImage) {
+                // Fallback: at least inject the main image as 'Exterior' if no custom gallery
+                car.gallery = [{
+                    url: `${BASE_URL}/uploads/${matchedImage}`,
+                    category: 'Exterior'
+                }];
+                updated = true;
+                console.log('  -> Fallback Exterior Gallery Injected');
             }
 
             if (updated) {
