@@ -107,7 +107,7 @@ const Cars = ({ inSinglePage }) => {
                 <div className="relative h-60 overflow-hidden group">
                   <img src={car.image} onError={(e) => {e.target.src='https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000&auto=format&fit=crop'}} alt={car.brand} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <span className="bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
+                    <span className="bg-slate-900/90 backdrop-blur-sm text-white text-[11px] font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-lg">
                       {car.type}
                     </span>
                     {(car.averageRating >= 4.7 || car.rating >= 4.7) && (

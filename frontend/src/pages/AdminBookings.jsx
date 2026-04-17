@@ -53,6 +53,54 @@ const AdminBookings = () => {
     }
   };
 
+  const handleExportReport = () => {
+    if (bookings.length === 0) return alert('No data to export');
+
+    const headers = [
+      'Booking ID',
+      'Customer Name',
+      'Customer Email',
+      'Car Brand',
+      'Car Model',
+      'Start Date',
+      'End Date',
+      'Start KM',
+      'End KM',
+      'Total KM',
+      'Total Price',
+      'Status'
+    ];
+
+    const dataRows = bookings.map(b => [
+      b._id,
+      b.user?.name || 'Guest',
+      b.user?.email || 'N/A',
+      b.car?.brand || 'N/A',
+      b.car?.model || 'N/A',
+      new Date(b.startDate).toLocaleDateString(),
+      new Date(b.endDate).toLocaleDateString(),
+      b.telemetry?.startKm || 0,
+      b.telemetry?.endKm || 0,
+      b.telemetry?.totalKm || 0,
+      b.totalPrice,
+      b.status
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...dataRows.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `united_car_reservations_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <AdminLayout>
       <header className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -60,7 +108,10 @@ const AdminBookings = () => {
           <h1 className="text-4xl font-black mb-2 dark:text-white">Transaction Ledger</h1>
           <p className="text-slate-500 font-medium tracking-wide">Strategic oversight of all customer rental activities.</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 font-bold text-sm dark:text-white hover:bg-slate-50 transition-all">
+        <button 
+          onClick={handleExportReport}
+          className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 font-bold text-sm dark:text-white hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+        >
            <Download className="h-4 w-4" /> Export Report
         </button>
       </header>

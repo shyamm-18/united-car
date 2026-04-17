@@ -176,10 +176,13 @@ const CarDetail = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <Link to="/" className="inline-flex items-center text-slate-500 hover:text-blue-600 transition-colors mb-8 group">
+        <button 
+          onClick={() => navigate(-1)} 
+          className="inline-flex items-center text-slate-500 hover:text-blue-600 transition-colors mb-8 group bg-transparent border-none cursor-pointer"
+        >
           <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
           Back to Selection
-        </Link>
+        </button>
       </div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
@@ -255,10 +258,11 @@ const CarDetail = () => {
                        className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white appearance-none"
                      >
                        <option disabled value="Select Pickup Location">Select Location</option>
-                       <option value="Delhi Airport (T3)">Delhi Airport (T3)</option>
-                       <option value="Luxury Hub - South Delhi">Luxury Hub - South Delhi</option>
-                       <option value="Gurgaon Elite Center">Gurgaon Elite Center</option>
-                       <option value="Noida Premium Lounge">Noida Premium Lounge</option>
+                       <option value="Jaipur - City Center">Jaipur - City Center</option>
+                       <option value="Jaipur - International Airport">Jaipur - International Airport</option>
+                       <option value="Jodhpur - Blue City Hub">Jodhpur - Blue City Hub</option>
+                       <option value="Bikaner - Jn. Station">Bikaner - Jn. Station</option>
+                       <option value="Sikar - Premium Lounge">Sikar - Premium Lounge</option>
                      </select>
                    </div>
                    <div className="space-y-2">

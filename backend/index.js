@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const contactRoutes = require('./routes/contactRoutes');
 const { initCronJobs } = require('./utils/cronJobs');
 const path = require('path');
 
@@ -28,7 +29,8 @@ app.use(cors({
   origin: '*',
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/cars', carRoutes);
@@ -39,6 +41,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Static uploads folder
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));

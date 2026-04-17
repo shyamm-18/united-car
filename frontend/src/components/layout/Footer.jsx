@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="bg-slate-50 dark:bg-slate-950 pt-24 pb-12 border-t border-slate-200 dark:border-slate-900 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          
+
           {/* Brand Col */}
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-2">
@@ -20,7 +20,7 @@ const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a href="#" className="p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-blue-600 transition-colors">
-                 <Globe className="h-5 w-5" />
+                <Globe className="h-5 w-5" />
               </a>
             </div>
           </div>
@@ -40,10 +40,10 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-bold mb-6 dark:text-white">Legal</h4>
             <ul className="space-y-4">
-               <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Terms of Service</a></li>
-               <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Privacy Policy</a></li>
-               <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Cookie Settings</a></li>
-               <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Rental Requirements</a></li>
+              <li><Link to="/terms" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Terms of Service</Link></li>
+              <li><Link to="/privacy" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
+              <li><a href="#" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Cookie Settings</a></li>
+              <li><Link to="/requirements" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">Rental Requirements</Link></li>
             </ul>
           </div>
 
@@ -52,16 +52,27 @@ const Footer = () => {
             <h4 className="text-lg font-bold mb-6 dark:text-white">Contact Us</h4>
             <ul className="space-y-5">
               <li className="flex items-start gap-3">
-                 <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
-                 <span className="text-slate-500 dark:text-slate-400">Jhotwara, <br/>Jaipur, RJ 302012</span>
+                <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
+                <a 
+                  href="https://www.google.com/maps/search/?api=1&query=JAIPUR+RAJASTHAN+302020" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors"
+                >
+                  JAIPUR, <br />RAJASTHAN 302020
+                </a>
               </li>
               <li className="flex items-center gap-3">
-                 <Mail className="h-5 w-5 text-blue-600" />
-                 <span className="text-slate-500 dark:text-slate-400">unitedcarsjhotwara@gmail.com</span>
+                <Mail className="h-5 w-5 text-blue-600" />
+                <a href="mailto:arebhai09@gmail.com" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">
+                  arebhai09@gmail.com
+                </a>
               </li>
               <li className="flex items-center gap-3">
-                 <Phone className="h-5 w-5 text-blue-600" />
-                 <span className="text-slate-500 dark:text-slate-400">9784820100</span>
+                <Phone className="h-5 w-5 text-blue-600" />
+                <a href="tel:9216497682" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors">
+                  9216497682
+                </a>
               </li>
             </ul>
           </div>
@@ -69,12 +80,12 @@ const Footer = () => {
         </div>
 
         <div className="pt-12 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-           <p className="text-slate-400 text-sm">
-             © 2024 UNITED CAR International. All rights reserved.
-           </p>
-           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Design Excellence <ExternalLink className="h-3 w-3" />
-           </div>
+          <p className="text-slate-400 text-sm">
+            © 2024 UNITED CAR International. All rights reserved.
+          </p>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Design Excellence <ExternalLink className="h-3 w-3" />
+          </div>
         </div>
       </div>
     </footer>

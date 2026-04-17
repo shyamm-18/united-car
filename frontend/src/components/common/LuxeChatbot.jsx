@@ -66,7 +66,7 @@ const LuxeChatbot = () => {
       console.error("AI Interface Error:", error);
       const errorMsg = { 
         id: Date.now() + 1, 
-        text: "System Offline. Please ensure your OpenAI API Key is configured in the backend environment.", 
+        text: "I am having some connection issues, but UNITED CAR is still here for you! Please reach out to our team at 9216497682 for any luxury car inquiries or bookings.", 
         sender: 'ai', 
         time: new Date() 
       };
@@ -197,7 +197,7 @@ const LuxeChatbot = () => {
                 </button>
               </form>
               <p className="mt-3 text-[9px] text-center font-bold text-slate-400 uppercase tracking-widest">
-                Luxury Assistance Powered by Gemini 2.5
+                Luxury Assistance Powered by Gemini 1.5
               </p>
             </div>
           </motion.div>

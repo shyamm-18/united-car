@@ -79,7 +79,7 @@ const Services = () => {
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 flex-grow">
                   {service.description}
                 </p>
-                <Link to="/contact" className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold group/link mt-auto">
+                <Link to={`/contact?service=${encodeURIComponent(service.title)}#contact-form`} className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold group/link mt-auto">
                   Request Service 
                   <ArrowRight className="ml-2 h-5 w-5 group-hover/link:translate-x-1 transition-transform" />
                 </Link>

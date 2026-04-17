@@ -16,6 +16,11 @@ import AdminBookings from './pages/AdminBookings';
 import AdminUsers from './pages/AdminUsers';
 import AdminFleetTracker from './pages/AdminFleetTracker';
 import AdminConfig from './pages/AdminConfig';
+import Contact from './pages/Contact';
+import Services from './pages/Services';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import RentalRequirements from './pages/RentalRequirements';
 import { useLocation } from 'react-router-dom';
 import LuxeChatbot from './components/common/LuxeChatbot';
 import SubscriptionPage from './pages/SubscriptionPage';
@@ -73,6 +78,11 @@ const AppContent = () => {
             <Route path="/success" element={<BookingSuccess />} />
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/requirements" element={<RentalRequirements />} />
             <Route path="/unlimited" element={<SubscriptionPage />} />
             
             {/* Admin Strategic Access Routes */}

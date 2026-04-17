@@ -8,7 +8,7 @@ const createTransporter = async () => {
     return nodemailer.createTransport({
         host: "smtp.ethereal.email",
         port: 587,
-        secure: false, 
+        secure: false,
         auth: {
             user: testAccount.user,
             pass: testAccount.pass,
@@ -20,7 +20,7 @@ const sendEmail = async (to, subject, html) => {
     try {
         const transporter = await createTransporter();
         const info = await transporter.sendMail({
-            from: '"UNITED CAR Concierge" <unitedcarsjhotwara@gmail.comm>',
+            from: '"UNITED CAR Concierge" <arebhai09@gmail.com>',
             to,
             subject,
             html,
@@ -59,6 +59,33 @@ const templates = {
             <p>This is a friendly reminder that your premium rental of the <strong>${carModel}</strong> starts tomorrow.</p>
             <p>Your vehicle will be sanitized and waiting at the selected pickup point.</p>
             <p style="margin-top: 30px;">See you soon,<br>The UNITED CAR Team</p>
+        </div>
+    `,
+    adminInquiryNotification: (name, email, message) => `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; padding: 40px; border: 1px solid #e2e8f0; border-radius: 24px; background-color: #ffffff;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #0f172a; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.5px;">UNITED CAR</h1>
+                <p style="color: #64748b; font-size: 14px; margin-top: 5px; text-transform: uppercase; tracking-widest: 1px;">New Business Inquiry</p>
+            </div>
+            
+            <div style="background-color: #f8fafc; padding: 30px; border-radius: 20px; border: 1px solid #f1f5f9;">
+                <div style="margin-bottom: 25px;">
+                    <p style="margin: 0; color: #94a3b8; font-size: 12px; font-weight: bold; text-transform: uppercase;">From</p>
+                    <p style="margin: 5px 0 0 0; color: #1e293b; font-size: 18px; font-weight: bold;">${name}</p>
+                    <p style="margin: 2px 0 0 0; color: #3b82f6; font-size: 14px;">${email}</p>
+                </div>
+                
+                <div style="padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <p style="margin: 0; color: #94a3b8; font-size: 12px; font-weight: bold; text-transform: uppercase;">Message Content</p>
+                    <p style="margin: 10px 0 0 0; color: #334155; font-size: 16px; line-height: 1.6; font-style: italic;">
+                        "${message}"
+                    </p>
+                </div>
+            </div>
+            
+            <p style="text-align: center; color: #94a3b8; font-size: 12px; margin-top: 30px;">
+                This inquiry was sent from the official UNITED CAR contact portal.
+            </p>
         </div>
     `
 };

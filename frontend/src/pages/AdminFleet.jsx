@@ -70,19 +70,31 @@ const AdminFleet = () => {
 
     setIsUploading(true);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-       const base64data = reader.result;
-       
-       if (type === 'main') setFormData({ ...formData, image: base64data });
-       if (type === 'gallery') setTempGalleryItem(prev => ({ ...prev, url: base64data }));
-       if (type === '360') setTemp360Url(base64data);
-       
-       setIsUploading(false);
-    };
-    reader.onerror = () => {
-       alert("Error processing local file for upload");
+    try {
+      const data = new FormData();
+      data.append('image', file);
+
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: data
+      });
+
+      const result = await res.json();
+      
+      if (res.ok && result.url) {
+        if (type === 'main') setFormData({ ...formData, image: result.url });
+        if (type === 'gallery') setTempGalleryItem(prev => ({ ...prev, url: result.url }));
+        if (type === '360') setTemp360Url(result.url);
+      } else {
+        throw new Error(result.message || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert("Error uploading image: " + error.message);
+    } finally {
        setIsUploading(false);
     }
   };
@@ -96,7 +108,7 @@ const AdminFleet = () => {
       : `${API_BASE_URL}/api/cars`;
 
     try {
-      await fetch(url, {
+      const res = await fetch(url, {
         method,
         headers: { 
           'Content-Type': 'application/json',
@@ -104,10 +116,18 @@ const AdminFleet = () => {
         },
         body: JSON.stringify(formData)
       });
-      setIsModalOpen(false);
-      fetchCars();
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setIsModalOpen(false);
+        fetchCars();
+      } else {
+        throw new Error(data.message || 'Failed to save vehicle data');
+      }
     } catch (error) {
       console.error(error);
+      alert(error.message);
     }
   };
 
@@ -235,7 +255,7 @@ const AdminFleet = () => {
                           </div>
                           <div className="space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Daily Rate (₹)</label>
-                             <input type="number" required value={formData.pricePerDay} onChange={e => setFormData({...formData, pricePerDay: e.target.value})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white" />
+                             <input type="number" required value={formData.pricePerDay} onChange={e => setFormData({...formData, pricePerDay: Number(e.target.value)})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white" />
                           </div>
                        </div>
                        

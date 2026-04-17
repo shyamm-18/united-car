@@ -174,7 +174,7 @@ const AICarFinder = () => {
                   <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-600" />
                   <input 
                     type="text" 
-                    placeholder="E.g. Delhi, Mumbai, Bangalore..."
+                    placeholder="E.g. Jaipur, Jodhpur, Bikaner..."
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     className="w-full pl-16 pr-6 py-6 rounded-3xl bg-white dark:bg-white/5 border-2 border-slate-100 dark:border-white/10 outline-none focus:border-blue-500 font-bold text-lg"
