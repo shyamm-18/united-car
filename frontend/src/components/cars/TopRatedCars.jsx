@@ -64,10 +64,10 @@ const TopRatedCars = () => {
                viewport={{ once: true }}
                className="group relative h-[400px] sm:h-[550px] rounded-[4rem] overflow-hidden shadow-2xl bg-white"
              >
-                {/* Image Layer */}
-                <div className="absolute inset-0">
-                   <img src={car.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={car.model} />
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
+                {/* Image Layer - Full Visibility Optimized */}
+                <div className="absolute inset-x-0 top-0 h-[60%] flex items-center justify-center p-8 bg-slate-50 dark:bg-slate-800/10">
+                   <img src={car.image} className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={car.model} />
+                   <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-900 via-transparent to-transparent pointer-events-none"></div>
                 </div>
 
                 {/* Badge Overlay */}

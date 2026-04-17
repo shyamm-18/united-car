@@ -104,8 +104,13 @@ const Cars = ({ inSinglePage }) => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-slate-100 dark:border-slate-800 card-hover flex flex-col"
               >
-                <div className="relative h-60 overflow-hidden group">
-                  <img src={car.image} onError={(e) => {e.target.src='https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000&auto=format&fit=crop'}} alt={car.brand} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="relative h-60 overflow-hidden group bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center p-4">
+                  <img 
+                    src={car.image} 
+                    onError={(e) => {e.target.src='https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000&auto=format&fit=crop'}} 
+                    alt={car.brand} 
+                    className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-700" 
+                  />
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
                     <span className="bg-slate-900/90 backdrop-blur-sm text-white text-[11px] font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full shadow-lg">
                       {car.type}
