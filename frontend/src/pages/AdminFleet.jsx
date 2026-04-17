@@ -211,51 +211,51 @@ const AdminFleet = () => {
 
       <AnimatePresence>
          {isModalOpen && (
-           <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+           <div className="fixed inset-0 z-[1000] flex items-center justify-center p-2 sm:p-4 overflow-hidden">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" />
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="relative w-full max-w-2xl glass p-10 rounded-[4rem] bg-white dark:bg-slate-900 max-h-[90vh] overflow-y-auto hide-scrollbar shadow-2xl"
+                className="relative w-full max-w-2xl glass p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[4rem] bg-white dark:bg-slate-900 max-h-[92vh] overflow-y-auto hide-scrollbar shadow-2xl"
               >
                 <div className="flex justify-between items-center mb-6">
-                   <h2 className="text-3xl font-black dark:text-white uppercase tracking-tighter">{editingCar ? 'Update Asset' : 'New Asset'}</h2>
+                   <h2 className="text-2xl sm:text-3xl font-black dark:text-white uppercase tracking-tighter">{editingCar ? 'Update Asset' : 'New Asset'}</h2>
                    <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors">
                       <X className="h-6 w-6 dark:text-white" />
                    </button>
                 </div>
                 
-                <div className="flex gap-4 mb-8 border-b border-slate-200 dark:border-slate-800 pb-4 overflow-x-auto hide-scrollbar">
-                    <button type="button" onClick={() => setActiveTab('basic')} className={`px-6 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-colors ${activeTab === 'basic' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400'}`}>Basic Info</button>
-                    <button type="button" onClick={() => setActiveTab('gallery')} className={`px-6 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-colors ${activeTab === 'gallery' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400'}`}>Gallery Assets</button>
-                    <button type="button" onClick={() => setActiveTab('360')} className={`px-6 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-colors ${activeTab === '360' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400'}`}>360 Spin Mode</button>
+                <div className="flex gap-2 sm:gap-4 mb-8 border-b border-slate-200 dark:border-slate-800 pb-4 overflow-x-auto hide-scrollbar">
+                    <button type="button" onClick={() => setActiveTab('basic')} className={`px-4 sm:px-6 py-2 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-colors ${activeTab === 'basic' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400'}`}>Basic Info</button>
+                    <button type="button" onClick={() => setActiveTab('gallery')} className={`px-4 sm:px-6 py-2 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-colors ${activeTab === 'gallery' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400'}`}>Gallery</button>
+                    <button type="button" onClick={() => setActiveTab('360')} className={`px-4 sm:px-6 py-2 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-colors ${activeTab === '360' ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400'}`}>360 Spin</button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                    {activeTab === 'basic' && (
                      <>
-                       <div className="grid grid-cols-2 gap-6">
-                          <div className="space-y-2">
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                          <div className="space-y-1 sm:space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Brand</label>
-                             <input required value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white" placeholder="BMW" />
+                             <input required value={formData.brand} onChange={e => setFormData({...formData, brand: e.target.value})} className="w-full px-6 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all" placeholder="BMW" />
                           </div>
-                          <div className="space-y-2">
+                          <div className="space-y-1 sm:space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Model</label>
-                             <input required value={formData.model} onChange={e => setFormData({...formData, model: e.target.value})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white" placeholder="X5" />
+                             <input required value={formData.model} onChange={e => setFormData({...formData, model: e.target.value})} className="w-full px-6 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all" placeholder="X5" />
                           </div>
                        </div>
                        
-                       <div className="grid grid-cols-2 gap-6">
-                          <div className="space-y-2">
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                          <div className="space-y-1 sm:space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Type</label>
-                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white">
+                             <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full px-6 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all appearance-none">
                                  <option>SUV</option><option>Sedan</option><option>Luxury</option><option>Sports</option><option>Hatchback</option>
                              </select>
                           </div>
-                          <div className="space-y-2">
+                          <div className="space-y-1 sm:space-y-2">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Daily Rate (₹)</label>
-                             <input type="number" required value={formData.pricePerDay} onChange={e => setFormData({...formData, pricePerDay: Number(e.target.value)})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white" />
+                             <input type="number" required value={formData.pricePerDay} onChange={e => setFormData({...formData, pricePerDay: Number(e.target.value)})} className="w-full px-6 sm:px-8 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-50 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-bold dark:text-white transition-all" />
                           </div>
                        </div>
                        
@@ -302,20 +302,20 @@ const AdminFleet = () => {
                           </div>
                        </div>
                        
-                       <div className="grid grid-cols-3 gap-4">
-                          <div className="space-y-2">
+                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div className="space-y-1">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Seats</label>
-                             <input type="number" required value={formData.seats} onChange={e => setFormData({...formData, seats: e.target.value})} className="w-full px-8 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white" />
+                             <input type="number" required value={formData.seats} onChange={e => setFormData({...formData, seats: e.target.value})} className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white" />
                           </div>
-                          <div className="space-y-2">
+                          <div className="space-y-1">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Drive</label>
-                             <select value={formData.transmission} onChange={e => setFormData({...formData, transmission: e.target.value})} className="w-full px-4 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white">
+                             <select value={formData.transmission} onChange={e => setFormData({...formData, transmission: e.target.value})} className="w-full px-4 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white appearance-none">
                                  <option>Automatic</option><option>Manual</option>
                              </select>
                           </div>
-                          <div className="space-y-2">
+                          <div className="space-y-1">
                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-4">Fuel</label>
-                             <select value={formData.fuel} onChange={e => setFormData({...formData, fuel: e.target.value})} className="w-full px-4 py-5 rounded-3xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white">
+                             <select value={formData.fuel} onChange={e => setFormData({...formData, fuel: e.target.value})} className="w-full px-4 py-4 rounded-2xl bg-slate-50 dark:bg-white/5 font-bold dark:text-white appearance-none">
                                 <option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option><option>CNG</option>
                              </select>
                           </div>
@@ -393,7 +393,7 @@ const AdminFleet = () => {
                      </div>
                    )}
 
-                   <button type="submit" className="w-full py-6 rounded-[2.5rem] bg-blue-600 text-white font-black text-xl shadow-2xl shadow-blue-500/20 hover:bg-blue-700 transition-all uppercase tracking-tighter mt-12">
+                   <button type="submit" className="w-full py-5 sm:py-6 rounded-2xl sm:rounded-[2.5rem] bg-blue-600 text-white font-black text-lg sm:text-xl shadow-2xl shadow-blue-500/20 hover:bg-blue-700 transition-all uppercase tracking-tighter mt-8 sm:mt-12">
                       {editingCar ? 'Update Vehicle Data' : 'Initialize New Vehicle'}
                    </button>
                 </form>

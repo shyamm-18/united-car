@@ -21,18 +21,22 @@ const imageMap = {
 
 const galleryMap = {
     'FORTUNER': [
+        { url: '/uploads/fortuner.png', category: 'Exterior' },
         { url: '/uploads/fortuner_interior.png', category: 'Interior' },
         { url: '/uploads/fortuner_detail.png', category: 'Detail' }
     ],
     'SWIFT': [
+        { url: '/uploads/swift.png', category: 'Exterior' },
         { url: '/uploads/swift_interior.png', category: 'Interior' },
         { url: '/uploads/swift_detail.png', category: 'Detail' }
     ],
     'THAR': [
+        { url: '/uploads/thar.png', category: 'Exterior' },
         { url: '/uploads/thar_interior.png', category: 'Interior' },
         { url: '/uploads/thar_detail.png', category: 'Detail' }
     ],
     'FRONX': [
+        { url: '/uploads/fronx.png', category: 'Exterior' },
         { url: '/uploads/fronx_interior.png', category: 'Interior' }
     ]
 };
