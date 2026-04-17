@@ -138,14 +138,24 @@ const CarGallery = ({ car }) => {
         </AnimatePresence>
 
         {/* Top Controls Overlay */}
-        <div className="absolute top-8 left-8 right-8 flex justify-between items-center z-10">
-           <div className="flex p-1.5 bg-black/60 backdrop-blur-2xl rounded-[1.5rem] border border-white/10 shadow-2xl">
-              <button onClick={() => setActiveTab('360')} className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === '360' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/60 hover:text-white'}`}><Box className="h-3.5 w-3.5" /> 360 Spin</button>
-              <button onClick={() => setActiveTab('gallery')} className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === 'gallery' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/60 hover:text-white'}`}><Camera className="h-3.5 w-3.5" /> Gallery</button>
+        <div className="absolute top-4 sm:top-8 left-4 sm:left-8 right-4 sm:right-8 flex flex-col sm:flex-row justify-between items-center gap-4 z-10 transition-all">
+           <div className="flex p-1 bg-black/40 sm:bg-black/60 backdrop-blur-2xl rounded-2xl sm:rounded-[1.5rem] border border-white/10 shadow-2xl scale-90 sm:scale-100 origin-top">
+              <button 
+                onClick={() => setActiveTab('360')} 
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === '360' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/60 hover:text-white'}`}
+              >
+                <Box className="h-3 sm:h-3.5 w-3 sm:w-3.5" /> 360
+              </button>
+              <button 
+                onClick={() => setActiveTab('gallery')} 
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === 'gallery' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/60 hover:text-white'}`}
+              >
+                <Camera className="h-3 sm:h-3.5 w-3 sm:w-3.5" /> Gallery
+              </button>
            </div>
-           <div className="flex gap-3">
-              <div className="bg-blue-600/90 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-lg flex items-center gap-2 backdrop-blur-md border border-white/20"><Zap className="h-3 w-3 fill-white" /> 4K Resolution</div>
-              <button className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white hover:bg-white hover:text-slate-900 transition-all"><Maximize2 className="h-5 w-5" /></button>
+           <div className="flex gap-2 sm:gap-3 items-center">
+              <div className="hidden sm:flex bg-blue-600/90 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-lg items-center gap-2 backdrop-blur-md border border-white/20"><Zap className="h-3 w-3 fill-white" /> 4K Resolution</div>
+              <button className="p-2 sm:p-3 bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 text-white hover:bg-white hover:text-slate-900 transition-all shadow-xl"><Maximize2 className="h-4 sm:h-5 w-4 sm:w-5" /></button>
            </div>
         </div>
       </div>
