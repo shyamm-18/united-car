@@ -116,7 +116,7 @@ const Contact = () => {
                 <div>
                   <h3 className="text-xl font-bold mb-1 dark:text-white">Call Us</h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm mb-2">Mon-Fri from 8am to 8pm.</p>
-                  <a href="tel:9216497682" className="font-semibold text-lg hover:text-blue-600 transition-colors">9216497682</a>
+                  <a href="tel:9216497682" className="font-semibold text-lg hover:text-blue-600 transition-colors block break-all">9216497682</a>
                 </div>
               </div>
             </div>
@@ -129,7 +129,7 @@ const Contact = () => {
                 <div>
                   <h3 className="text-xl font-bold mb-1 dark:text-white">Email Us</h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm mb-2">We'll respond within 2 hours.</p>
-                  <a href="mailto:arebhai09@gmail.com" className="font-semibold text-lg hover:text-blue-600 transition-colors">arebhai09@gmail.com</a>
+                  <a href="mailto:arebhai09@gmail.com" className="font-semibold text-lg hover:text-blue-600 transition-colors block break-all">arebhai09@gmail.com</a>
                 </div>
               </div>
             </div>
@@ -146,7 +146,7 @@ const Contact = () => {
                     href="https://www.google.com/maps/search/?api=1&query=JAIPUR+RAJASTHAN+302020"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-semibold hover:text-blue-600 transition-colors"
+                    className="font-semibold hover:text-blue-600 transition-colors block break-words"
                   >
                     JAIPUR, RAJASTHAN 302020
                   </a>

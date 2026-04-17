@@ -122,7 +122,8 @@ const AdminBookings = () => {
           </div>
       ) : (
         <div className="glass rounded-[3rem] shadow-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scrollbar-hide relative">
+            <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white/20 to-transparent pointer-events-none md:hidden z-10"></div>
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 dark:bg-white/5">

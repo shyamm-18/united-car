@@ -134,12 +134,12 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: '100dvh' }}
+            animate={{ opacity: 1, height: 'calc(100vh - 80px)' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="md:hidden fixed inset-0 top-20 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 z-40 overflow-y-auto pb-24"
+            className="md:hidden fixed inset-x-0 top-20 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 z-40 overflow-y-auto"
           >
-            <div className="flex flex-col p-6 space-y-6 text-center">
+            <div className="flex flex-col p-6 space-y-6 text-center pb-12">
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="text-xl font-bold dark:text-white">{t('nav.home')}</Link>
               <a onClick={() => setIsMobileMenuOpen(false)} href="/#fleet" className="text-xl font-bold dark:text-white">{t('nav.fleet')}</a>
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/unlimited" className="text-xl font-bold dark:text-white">{t('nav.unlimited')}</Link>
