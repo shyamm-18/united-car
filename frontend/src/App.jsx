@@ -107,7 +107,7 @@ const AppContent = () => {
         </ErrorBoundary>
       </main>
       {!hideLayout && <Footer />}
-      {!hideLayout && <LuxeChatbot />}
+      {location.pathname === '/' && <LuxeChatbot />}
     </div>
   );
 };
