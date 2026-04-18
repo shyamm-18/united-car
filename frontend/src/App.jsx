@@ -62,7 +62,9 @@ const AppContent = () => {
   const isAuthPath = ['/login', '/register', '/forgot-password'].includes(location.pathname) || 
                      location.pathname.startsWith('/resetpassword');
 
-  const hideLayout = isAdminPath || isAuthPath;
+  const isProfilePath = ['/profile', '/profile/settings', '/profile/kyc', '/my-bookings'].includes(location.pathname);
+
+  const hideLayout = isAdminPath || isAuthPath || isProfilePath;
 
   return (
     <div className="min-h-screen flex flex-col font-inter bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
