@@ -9,10 +9,14 @@ const { sendSMS, smsTemplates } = require('../utils/smsHelper');
 // @access  Private
 const getNotifications = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+       return res.status(401).json({ message: 'Authentication required for notifications' });
+    }
     const notifications = await Notification.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(10);
-    res.json(notifications);
+    res.json(notifications || []);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('SERVER NOTIFICATION ERROR:', error);
+    res.status(500).json({ message: 'Internal server error processing notifications' });
   }
 };
 

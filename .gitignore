@@ -24,11 +24,7 @@ frontend/.env
 *.sw?
 
 # Project specific
-backend/uploads/*.png
-backend/uploads/*.jpg
-backend/uploads/*.jpeg
-backend/uploads/*.webp
-!backend/uploads/.gitkeep
+backend/uploads/.gitkeep
 
 # Logs
 npm-debug.log*
