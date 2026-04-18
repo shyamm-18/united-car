@@ -54,28 +54,30 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
 }));
 
 // Serve Frontend Static Files with Cache Control
-const frontendPath = path.resolve(__dirname, '../frontend/dist');
+const frontendPath = path.resolve(__dirname, '..', 'frontend', 'dist');
 app.use(express.static(frontendPath, {
   maxAge: '1d',
-  etag: true,
-  index: ['index.html']
+  etag: true
 }));
 
 // API Health Check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'active', timestamp: new Date() });
+  res.json({ status: 'up', environment: process.env.NODE_ENV, timestamp: new Date() });
 });
 
 // Catch-all middleware to serve Frontend index.html for SPA routing
-app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
-    res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    const indexPath = path.join(frontendPath, 'index.html');
+    res.sendFile(indexPath, (err) => {
       if (err) {
-        console.error('FRONTEND SERVING ERROR:', err);
-        res.status(404).send('System Core Missing - Please rebuild frontend.');
+        console.error('FRONTEND SERVING ERROR:', err.message);
+        res.status(404).send('<h1>SYSTEM RECOVERY: SITE IS BUILDING</h1><p>The platform is currently updating on the cloud. Please refresh in 30 seconds.</p>');
       }
     });
+    return;
   }
+  next();
 });
 
 const PORT = process.env.PORT || 5000;
