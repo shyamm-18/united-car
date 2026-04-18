@@ -6,7 +6,9 @@ import API_BASE_URL from '../../config';
 const CarGallery = ({ car }) => {
   const [activeTab, setActiveTab] = useState('gallery'); 
   const [viewMode, setViewMode] = useState('Exterior'); 
-  
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+
   // 360 State
   const [rotationIndex, setRotationIndex] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
@@ -45,6 +47,13 @@ const CarGallery = ({ car }) => {
     return () => clearInterval(interval);
   }, [activeTab, autoRotate, isRotating, images360.length]);
 
+  // Close full screen on ESC
+  useEffect(() => {
+    const handleEsc = (e) => { if (e.key === 'Escape') setIsFullScreen(false); };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
   // Handle Drag/Swipe Rotation
   const handleStart = (clientX) => {
     setIsRotating(true);
@@ -71,7 +80,6 @@ const CarGallery = ({ car }) => {
 
   const galleryImages = car?.gallery?.length > 0 ? car.gallery : [{ url: car?.image, category: 'Exterior' }];
   const filteredGallery = galleryImages.filter(img => img.category === viewMode || viewMode === 'All');
-  const [galleryIndex, setGalleryIndex] = useState(0);
 
   return (
     <div className="w-full space-y-6">
@@ -156,7 +164,12 @@ const CarGallery = ({ car }) => {
            </div>
            <div className="flex gap-2 sm:gap-3 items-center">
               <div className="hidden sm:flex bg-blue-600/90 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-lg items-center gap-2 backdrop-blur-md border border-white/20"><Zap className="h-3 w-3 fill-white" /> 4K Resolution</div>
-              <button className="p-2 sm:p-3 bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 text-white hover:bg-white hover:text-slate-900 transition-all shadow-xl"><Maximize2 className="h-4 sm:h-5 w-4 sm:w-5" /></button>
+              <button 
+                onClick={() => setIsFullScreen(true)}
+                className="p-2 sm:p-3 bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 text-white hover:bg-white hover:text-slate-900 transition-all shadow-xl"
+              >
+                <Maximize2 className="h-4 sm:h-5 w-4 sm:w-5" />
+              </button>
            </div>
         </div>
       </div>
@@ -196,9 +209,69 @@ const CarGallery = ({ car }) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* FULL SCREEN MODAL */}
+      <AnimatePresence>
+        {isFullScreen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-4 sm:p-12 cursor-zoom-out"
+            onClick={() => setIsFullScreen(false)}
+          >
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsFullScreen(false); }}
+              className="absolute top-8 right-8 p-4 rounded-full bg-white/10 text-white hover:bg-white hover:text-black transition-all z-[1010]"
+            >
+              <ChevronLeft className="h-8 w-8 rotate-180 sm:rotate-0" />
+            </button>
+
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full h-full max-w-6xl flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {activeTab === '360' ? (
+                <div 
+                  className="w-full h-full flex items-center justify-center cursor-ew-resize touch-none"
+                  onMouseDown={(e) => handleStart(e.clientX)}
+                  onMouseMove={(e) => handleMove(e.clientX)}
+                  onMouseUp={handleEnd}
+                  onTouchStart={(e) => handleStart(e.touches[0].clientX)}
+                  onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+                  onTouchEnd={handleEnd}
+                >
+                  <img 
+                    src={images360[rotationIndex]?.startsWith('http') ? images360[rotationIndex] : `${API_BASE_URL}${images360[rotationIndex]}`} 
+                    className="max-w-full max-h-full object-contain drop-shadow-[0_0_50px_rgba(59,130,246,0.3)]"
+                    alt="360 Full"
+                  />
+                  <div className="absolute bottom-12 bg-white/5 border border-white/10 px-6 py-3 rounded-full text-[10px] font-black text-white/60 tracking-widest uppercase backdrop-blur-md">Swipe to Rotate in Full Screen</div>
+                </div>
+              ) : (
+                <div className="relative w-full h-full flex items-center justify-center">
+                   <img 
+                     src={filteredGallery[galleryIndex]?.url?.startsWith('http') ? filteredGallery[galleryIndex].url : `${API_BASE_URL}${filteredGallery[galleryIndex]?.url}`} 
+                     className="max-w-full max-h-full object-contain rounded-3xl"
+                     alt="Gallery Full"
+                   />
+                   <button onClick={(e) => { e.stopPropagation(); setGalleryIndex(prev => (prev - 1 + filteredGallery.length) % filteredGallery.length); }} className="absolute -left-4 sm:left-4 p-6 rounded-full bg-white/5 text-white hover:bg-blue-600 transition-all"><ChevronLeft className="h-10 w-10" /></button>
+                   <button onClick={(e) => { e.stopPropagation(); setGalleryIndex(prev => (prev + 1) % filteredGallery.length); }} className="absolute -right-4 sm:right-4 p-6 rounded-full bg-white/5 text-white hover:bg-blue-600 transition-all"><ChevronRight className="h-10 w-10" /></button>
+                </div>
+              )}
+            </motion.div>
+
+            <div className="absolute bottom-12 flex gap-4">
+               <button onClick={(e) => { e.stopPropagation(); setActiveTab(activeTab === '360' ? 'gallery' : '360'); }} className="px-8 py-3 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">Toggle View Mode</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
 export default CarGallery;
-
