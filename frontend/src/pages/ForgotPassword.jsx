@@ -55,15 +55,9 @@ const ForgotPassword = () => {
         )}
 
         {message && (
-          <div className="mb-6 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 flex flex-col items-center gap-4 text-center">
+          <div className="mb-6 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-red-800 text-green-600 dark:text-green-400 flex flex-col items-center gap-4 text-center">
             <CheckCircle className="h-8 w-8 text-green-500" />
             <span className="text-sm font-bold">{message}</span>
-            {debugUrl && (
-              <div className="mt-2 p-3 bg-white dark:bg-slate-800 rounded-lg border border-green-200/50 text-[10px] break-all">
-                <p className="mb-1 uppercase tracking-widest font-black opacity-50">Testing Link:</p>
-                <a href={debugUrl} className="text-blue-500 hover:underline">{debugUrl}</a>
-              </div>
-            )}
             <Link to="/login" className="text-blue-600 font-bold hover:underline">Back to Login</Link>
           </div>
         )}
