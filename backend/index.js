@@ -65,17 +65,26 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'up', environment: process.env.NODE_ENV, timestamp: new Date() });
 });
 
+// Home Route with Smart Redirect for Production Stability
+app.get('/', (req, res) => {
+  const indexPath = path.join(frontendPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  // Fallback to high-speed Vercel frontend if Render build hasn't finished
+  console.log('Redirecting to Vercel fallback...');
+  res.redirect('https://united-car.vercel.app');
+});
+
 // Catch-all middleware to serve Frontend index.html for SPA routing
 app.use((req, res, next) => {
   if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
     const indexPath = path.join(frontendPath, 'index.html');
-    res.sendFile(indexPath, (err) => {
-      if (err) {
-        console.error('FRONTEND SERVING ERROR:', err.message);
-        res.status(404).send('<h1>SYSTEM RECOVERY: SITE IS BUILDING</h1><p>The platform is currently updating on the cloud. Please refresh in 30 seconds.</p>');
-      }
-    });
-    return;
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+    // Final safety: redirect deep links to Vercel home if build is missing
+    return res.redirect('https://united-car.vercel.app' + req.path);
   }
   next();
 });
