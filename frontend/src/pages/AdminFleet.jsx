@@ -20,6 +20,13 @@ const AdminFleet = () => {
   const [tempGalleryItem, setTempGalleryItem] = useState({ url: '', category: 'Exterior' });
   const [temp360Url, setTemp360Url] = useState('');
 
+  // Helper to resolve image URLs against API_BASE_URL if relative
+  const resolveUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${API_BASE_URL}${url}`;
+  };
+
   const fetchCars = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/cars`);
@@ -159,7 +166,7 @@ const AdminFleet = () => {
               className="glass rounded-[3rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 shadow-xl overflow-hidden group relative"
             >
               <div className="relative h-56">
-                  <img src={car.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={car.model} />
+                  <img src={resolveUrl(car.image)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={car.model} />
                   <div className="absolute top-4 right-4 flex gap-2">
                     <button onClick={() => handleOpenEdit(car)} className="p-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl text-slate-800 dark:text-white hover:bg-blue-600 hover:text-white transition-all shadow-lg">
                         <Edit className="h-5 w-5" />
@@ -265,7 +272,7 @@ const AdminFleet = () => {
                              <div className="relative group/upload h-48 rounded-[2.5rem] bg-slate-100 dark:bg-white/5 border-2 border-dashed border-slate-200 dark:border-white/10 flex flex-col items-center justify-center overflow-hidden transition-all hover:border-blue-500/50">
                                 {formData.image ? (
                                    <>
-                                     <img src={formData.image} className="w-full h-full object-cover opacity-60 group-hover/upload:opacity-40 transition-opacity" alt="Preview" />
+                                     <img src={resolveUrl(formData.image)} className="w-full h-full object-cover opacity-60 group-hover/upload:opacity-40 transition-opacity" alt="Preview" />
                                      <div className="absolute inset-0 flex flex-col items-center justify-center">
                                         <button 
                                           type="button" 
@@ -348,7 +355,7 @@ const AdminFleet = () => {
                        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                           {formData.gallery?.map((img, idx) => (
                             <div key={idx} className="relative h-32 rounded-2xl overflow-hidden group border dark:border-slate-700">
-                               <img src={img.url} className="w-full h-full object-cover" />
+                               <img src={resolveUrl(img.url)} className="w-full h-full object-cover" />
                                <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full">{img.category}</div>
                                <button type="button" onClick={() => {
                                   setFormData(prev => ({...prev, gallery: prev.gallery.filter((_, i) => i !== idx)}));
@@ -382,7 +389,7 @@ const AdminFleet = () => {
                        <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
                           {formData.images360?.map((url, idx) => (
                             <div key={idx} className="relative h-20 rounded-xl overflow-hidden group border dark:border-slate-700">
-                               <img src={url} className="w-full h-full object-cover" />
+                               <img src={resolveUrl(url)} className="w-full h-full object-cover" />
                                <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">#{idx+1}</div>
                                <button type="button" onClick={() => {
                                   setFormData(prev => ({...prev, images360: prev.images360.filter((_, i) => i !== idx)}));
