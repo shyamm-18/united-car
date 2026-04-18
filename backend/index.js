@@ -16,6 +16,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const compression = require('compression');
 const { initCronJobs } = require('./utils/cronJobs');
 const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
