@@ -1,33 +1,36 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
-import Home from './pages/Home';
-import CarDetail from './pages/CarDetail';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import BookingSuccess from './pages/BookingSuccess';
-import MyBookings from './pages/MyBookings';
-import Profile from './pages/Profile';
-import AdminRoute from './components/auth/AdminRoute';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminFleet from './pages/AdminFleet';
-import AdminBookings from './pages/AdminBookings';
-import AdminUsers from './pages/AdminUsers';
-import AdminFleetTracker from './pages/AdminFleetTracker';
-import AdminConfig from './pages/AdminConfig';
-import Contact from './pages/Contact';
-import Services from './pages/Services';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import RentalRequirements from './pages/RentalRequirements';
-import { useLocation } from 'react-router-dom';
 import LuxeChatbot from './components/common/LuxeChatbot';
-import SubscriptionPage from './pages/SubscriptionPage';
+import SkeletonLoader from './components/common/SkeletonLoader';
 import React from 'react';
 import { AlertCircle, Shield, Activity } from 'lucide-react';
 
-// STABLE Error Boundary for Diagnostic Visibility
+// Lazy Loaded Pages for Blitz Speed
+const Home = lazy(() => import('./pages/Home'));
+const CarDetail = lazy(() => import('./pages/CarDetail'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const BookingSuccess = lazy(() => import('./pages/BookingSuccess'));
+const MyBookings = lazy(() => import('./pages/MyBookings'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Services = lazy(() => import('./pages/Services'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const RentalRequirements = lazy(() => import('./pages/RentalRequirements'));
+const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminFleet = lazy(() => import('./pages/AdminFleet'));
+const AdminBookings = lazy(() => import('./pages/AdminBookings'));
+const AdminUsers = lazy(() => import('./pages/AdminUsers'));
+const AdminFleetTracker = lazy(() => import('./pages/AdminFleetTracker'));
+const AdminConfig = lazy(() => import('./pages/AdminConfig'));
+import AdminRoute from './components/auth/AdminRoute';
+
+// STABLE Error Boundary
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -41,19 +44,7 @@ class ErrorBoundary extends React.Component {
         <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center bg-slate-50 dark:bg-slate-950">
           <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center text-red-600 mb-6 font-bold text-2xl">!</div>
           <h2 className="text-3xl font-black mb-4 dark:text-white uppercase tracking-tighter">System Interruption</h2>
-          <p className="text-slate-500 mb-8 max-w-md font-medium">An unexpected runtime failure occurred. Dashboard synchronization paused for safety.</p>
-          <button 
-            onClick={() => window.location.href = '/'}
-            className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/30 active:scale-95 transition-all"
-          >
-            Reset Command Center
-          </button>
-          <div className="mt-12 p-6 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/10 text-left max-w-2xl w-full overflow-hidden shadow-2xl">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Diagnostics Console</div>
-            <pre className="text-xs text-red-500 font-mono overflow-auto max-h-40 custom-scrollbar">
-              {this.state.error?.toString()}
-            </pre>
-          </div>
+          <button onClick={() => window.location.href = '/'} className="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/30 transition-all">Reset Command Center</button>
         </div>
       );
     }
@@ -70,33 +61,33 @@ const AppContent = () => {
       {!isAdminPath && <Navbar />}
       <main className={`flex-grow ${!isAdminPath ? 'pt-20' : ''}`}>
         <ErrorBoundary>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/cars/:id" element={<CarDetail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/success" element={<BookingSuccess />} />
-            <Route path="/my-bookings" element={<MyBookings />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/requirements" element={<RentalRequirements />} />
-            <Route path="/unlimited" element={<SubscriptionPage />} />
-            
-            {/* Admin Strategic Access Routes */}
-            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-            <Route path="/admin/fleet" element={<AdminRoute><AdminFleet /></AdminRoute>} />
-            <Route path="/admin/bookings" element={<AdminRoute><AdminBookings /></AdminRoute>} />
-            <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
-            <Route path="/admin/tracking" element={<AdminRoute><AdminFleetTracker /></AdminRoute>} />
-            <Route path="/admin/config" element={<AdminRoute><AdminConfig /></AdminRoute>} />
-            
-            {/* Catch-all Redirect */}
-            <Route path="/cars" element={<Navigate to="/#fleet" replace />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<SkeletonLoader />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/cars/:id" element={<CarDetail />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/success" element={<BookingSuccess />} />
+              <Route path="/my-bookings" element={<MyBookings />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/requirements" element={<RentalRequirements />} />
+              <Route path="/unlimited" element={<SubscriptionPage />} />
+              
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin/fleet" element={<AdminRoute><AdminFleet /></AdminRoute>} />
+              <Route path="/admin/bookings" element={<AdminRoute><AdminBookings /></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+              <Route path="/admin/tracking" element={<AdminRoute><AdminFleetTracker /></AdminRoute>} />
+              <Route path="/admin/config" element={<AdminRoute><AdminConfig /></AdminRoute>} />
+              
+              <Route path="/cars" element={<Navigate to="/#fleet" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
       </main>
       {!isAdminPath && <Footer />}

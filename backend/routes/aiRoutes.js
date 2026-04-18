@@ -34,6 +34,11 @@ router.post('/chat', chatLimiter, async (req, res) => {
       
       TONE: Professional, luxury-focused, polite, and helpful. Use Hindi-English (Hinglish) occasionally if appropriate for an Indian audience, but keep it sophisticated. 
       
+      IMPORTANT FORMATTING RULES:
+      - DO NOT use markdown formatting like asterisks (**) or double asterisks for bolding words. 
+      - DO NOT use hashtags (#) for headers.
+      - Use clean, professional plain text ONLY. If you need to emphasize something, use capitalized words or clear wording instead of markdown symbols.
+      
       User Message: ${message}
     `;
 

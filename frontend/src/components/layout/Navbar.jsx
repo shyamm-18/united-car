@@ -14,15 +14,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  const handleAdminProtect = (e) => {
-    e.preventDefault();
-    const pass = window.prompt("Admin Access Code Required:");
-    if (pass === "9216497682") {
-      navigate('/admin');
-    } else {
-      alert("Unauthorized Access!");
-    }
-  };
+
 
   return (
     <motion.nav 
@@ -47,7 +39,6 @@ const Navbar = () => {
             {user?.email === 'arebhai09@gmail.com' && (
               <Link 
                 to="/admin" 
-                onClick={handleAdminProtect}
                 className="font-extrabold text-blue-600 hover:text-blue-800 transition-colors uppercase text-[11px] tracking-[0.2em] bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-lg"
               >
                 Admin
@@ -64,7 +55,6 @@ const Navbar = () => {
                 {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
                   <Link 
                     to="/admin" 
-                    onClick={handleAdminProtect}
                     className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-xl hover:scale-105 transition-transform"
                   >
                     Dashboard
@@ -145,7 +135,7 @@ const Navbar = () => {
               <Link onClick={() => setIsMobileMenuOpen(false)} to="/unlimited" className="text-xl font-bold dark:text-white">{t('nav.unlimited')}</Link>
               {user?.email === 'arebhai09@gmail.com' && (
                 <Link 
-                  onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
+                  onClick={() => setIsMobileMenuOpen(false)} 
                   to="/admin"
                   className="text-xl font-black text-blue-600 uppercase tracking-widest block bg-blue-50 dark:bg-blue-900/20 py-3 rounded-2xl"
                 >
@@ -161,7 +151,7 @@ const Navbar = () => {
                   <Link onClick={() => setIsMobileMenuOpen(false)} to="/my-bookings" className="text-xl font-bold dark:text-white">My Reservations</Link>
                   {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
                     <Link 
-                      onClick={(e) => { setIsMobileMenuOpen(false); handleAdminProtect(e); }} 
+                      onClick={() => setIsMobileMenuOpen(false)} 
                       to="/admin" 
                       className="text-xl font-black text-blue-500 uppercase"
                     >

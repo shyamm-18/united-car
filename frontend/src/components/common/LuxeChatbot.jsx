@@ -56,7 +56,7 @@ const LuxeChatbot = () => {
       
       const aiResponse = { 
         id: Date.now() + 1, 
-        text: data.text || "I'm having trouble connecting to my intelligence core. Please try again in a moment.", 
+        text: (data.text || "I'm having trouble connecting to my intelligence core. Please try again in a moment.").replace(/\*\*/g, ''), 
         sender: 'ai', 
         time: new Date() 
       };

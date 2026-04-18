@@ -10,7 +10,7 @@ async function list() {
         const cars = await Car.find({});
         console.log('--- DATABASE CAR MODELS ---');
         cars.forEach(c => {
-            console.log(`[${c._id}] ${c.brand} | ${c.model}`);
+            console.log(`[${c._id}] ${c.brand} | ${c.model} | Price: ${c.pricePerDay} | Image: ${c.image}`);
         });
         process.exit(0);
     } catch (e) {

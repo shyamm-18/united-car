@@ -13,6 +13,7 @@ const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const compression = require('compression');
 const { initCronJobs } = require('./utils/cronJobs');
 const path = require('path');
 
@@ -24,6 +25,9 @@ connectDB();
 initCronJobs();
 
 const app = express();
+
+// Speed Optimization: Gzip Compression
+app.use(compression());
 
 app.use(cors({
   origin: '*',
@@ -43,11 +47,31 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/contact', contactRoutes);
 
-// Static uploads folder
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+// Static uploads folder with Cache Control (7 days)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  maxAge: '7d',
+  immutable: true
+}));
 
-app.get('/', (req, res) => {
+// Serve Frontend Static Files with Cache Control
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath, {
+  maxAge: '1d',
+  etag: true
+}));
+
+// API Health Check (at a specific route instead of root)
+app.get('/api/health', (req, res) => {
   res.send('API is running...');
+});
+
+// Catch-all middleware to serve Frontend index.html for SPA routing
+app.use((req, res, next) => {
+  // Only handle GET requests that are not API calls or static files
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    return res.sendFile(path.join(frontendPath, 'index.html'));
+  }
+  next();
 });
 
 const PORT = process.env.PORT || 5000;

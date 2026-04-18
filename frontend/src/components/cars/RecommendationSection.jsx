@@ -62,11 +62,11 @@ const RecommendationSection = () => {
                transition={{ delay: index * 0.1 }}
                className="group relative bg-slate-800/40 backdrop-blur-md rounded-[2.5rem] border border-white/5 overflow-hidden hover:border-blue-500/50 transition-all duration-500"
              >
-                <div className="relative h-60 overflow-hidden flex items-center justify-center bg-slate-800/20 p-6 group">
+                <div className="relative h-64 overflow-hidden flex items-center justify-center bg-slate-950 group">
                    <img 
                      src={car.image} 
                      alt={car.model} 
-                     className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-700" 
+                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                    />
                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                    <div className="absolute top-4 left-4 bg-blue-600/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg">
