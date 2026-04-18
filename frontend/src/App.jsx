@@ -1,5 +1,5 @@
+import React, { Suspense, lazy, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
@@ -7,7 +7,6 @@ import LuxeChatbot from './components/common/LuxeChatbot';
 import SkeletonLoader from './components/common/SkeletonLoader';
 import { AlertCircle, Shield, Activity } from 'lucide-react';
 import { AuthContext } from './context/AuthContext';
-import { useContext, useEffect } from 'react';
 import { subscribeToPushNotifications } from './utils/pushNotificationHelper';
 
 // Lazy Loaded Pages for Blitz Speed
