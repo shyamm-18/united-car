@@ -51,9 +51,38 @@ const Profile = () => {
     else { setLicenseFile(file); setLicensePreview(url); }
   };
 
+  // Helper for faster uploads via compression
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200; // Optimal for verified preview
+          if (width > height) {
+            if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+          } else {
+            if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7);
+        };
+      };
+    });
+  };
+
   const uploadFile = async (file, fieldName) => {
+    const compressed = await compressImage(file);
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('image', compressed, 'upload.jpg');
     const res = await fetch(`${API_BASE_URL}/api/upload`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${user.token}` },
@@ -123,23 +152,34 @@ const Profile = () => {
     }
   };
 
-  const FileUploadBox = ({ preview, inputRef, onChange, label, icon }) => (
+  const FileUploadBox = ({ preview, inputRef, onChange, label, icon, isUploading }) => (
     <div
-      className="relative border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500 transition-colors group"
-      onClick={() => inputRef.current?.click()}
+      className={`relative border-2 border-dashed ${isUploading ? 'border-blue-500 bg-blue-50/10' : 'border-slate-300 dark:border-slate-600'} rounded-2xl overflow-hidden cursor-pointer hover:border-blue-500 transition-all group`}
+      onClick={() => !isUploading && inputRef.current?.click()}
     >
       {preview ? (
         <div className="relative">
           <img src={preview} alt={label} className="w-full h-44 object-cover" />
+          {isUploading && (
+            <div className="absolute inset-0 bg-blue-600/40 backdrop-blur-sm flex items-center justify-center">
+              <Loader2 className="h-8 w-8 text-white animate-spin" />
+            </div>
+          )}
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
             <p className="text-white font-bold text-sm">Change Photo</p>
           </div>
         </div>
       ) : (
         <div className="h-44 flex flex-col items-center justify-center gap-3 p-6 text-slate-400">
-          {icon}
-          <p className="font-bold text-sm text-center">{label}</p>
-          <p className="text-xs text-center">Click to upload (JPG, PNG)</p>
+          {isUploading ? (
+            <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
+          ) : (
+            <>
+              {icon}
+              <p className="font-bold text-sm text-center">{label}</p>
+              <p className="text-xs text-center uppercase tracking-tighter opacity-60">Wait, Only JPG/PNG</p>
+            </>
+          )}
         </div>
       )}
       <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onChange} />
@@ -324,14 +364,15 @@ const Profile = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-3">
                           <label className="text-xs font-black uppercase tracking-widest ml-1 flex items-center gap-2 text-slate-400">
-                            <FileImage className="h-4 w-4" /> Government ID Photo
+                            <FileImage className="h-4 w-4" /> Aadhar Card / ID Photo
                           </label>
                           <FileUploadBox
                             preview={idPreview}
                             inputRef={idRef}
                             onChange={e => handleFileChange(e, 'id')}
-                            label="Aadhar Card / Passport"
+                            label="Upload Aadhar Card"
                             icon={<Upload className="h-10 w-10 text-blue-500" />}
+                            isUploading={isSubmittingKyc}
                           />
                         </div>
                         <div className="space-y-3">
@@ -342,17 +383,18 @@ const Profile = () => {
                             preview={licensePreview}
                             inputRef={licenseRef}
                             onChange={e => handleFileChange(e, 'license')}
-                            label="Legal Driving Permit"
+                            label="Upload Driving License"
                             icon={<Upload className="h-10 w-10 text-green-500" />}
+                            isUploading={isSubmittingKyc}
                           />
                         </div>
                       </div>
 
                       <button type="submit" disabled={isSubmittingKyc} className="w-full py-5 rounded-[2rem] bg-slate-900 dark:bg-blue-600 text-white font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4">
                         {isSubmittingKyc ? (
-                          <><Loader2 className="animate-spin h-6 w-6" /> Processing...</>
+                          <><Loader2 className="animate-spin h-6 w-6" /> Compressing & Uploading...</>
                         ) : (
-                          <><Shield className="h-6 w-6" /> Submit Documents</>
+                          <><Shield className="h-6 w-6" /> Submit KYC Documents</>
                         )}
                       </button>
                     </form>
