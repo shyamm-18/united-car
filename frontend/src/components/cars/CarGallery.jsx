@@ -57,7 +57,7 @@ const CarGallery = ({ car }) => {
               onTouchEnd={handleEnd}
             >
               <img 
-                src={images360[rotationIndex]} 
+                src={images360[rotationIndex]?.startsWith('http') ? images360[rotationIndex] : `${API_BASE_URL}${images360[rotationIndex]}`} 
                 alt="360 view" 
                 className="w-full h-full object-contain pointer-events-none transition-transform duration-300" 
               />

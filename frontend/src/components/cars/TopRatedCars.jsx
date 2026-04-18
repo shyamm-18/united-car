@@ -66,7 +66,7 @@ const TopRatedCars = () => {
              >
                 {/* Image Layer - Full Visibility Optimized */}
                  <div className="absolute inset-x-0 top-0 h-[60%] flex items-center justify-center bg-slate-950 group">
-                    <img src={car.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={car.model} />
+                    <img src={car.image?.startsWith('http') ? car.image : `${API_BASE_URL}${car.image}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={car.model} />
                    <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-900 via-transparent to-transparent pointer-events-none"></div>
                 </div>
 

@@ -62,9 +62,9 @@ const RecommendationSection = () => {
                transition={{ delay: index * 0.1 }}
                className="group relative bg-slate-800/40 backdrop-blur-md rounded-[2.5rem] border border-white/5 overflow-hidden hover:border-blue-500/50 transition-all duration-500"
              >
-                <div className="relative h-64 overflow-hidden flex items-center justify-center bg-slate-950 group">
+                <div className="relative h-72 overflow-hidden flex items-center justify-center bg-slate-950 group">
                    <img 
-                     src={car.image} 
+                     src={car.image?.startsWith('http') ? car.image : `${API_BASE_URL}${car.image}`} 
                      alt={car.model} 
                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                    />

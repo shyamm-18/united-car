@@ -49,7 +49,7 @@ const galleryMap = {
     ]
 };
 
-const BASE_URL = 'http://localhost:5000'; // Target local for now to verify easily
+const BASE_URL = ''; // Make paths relative for universal compatibility (Prod/Local)
 
 async function restore() {
     try {

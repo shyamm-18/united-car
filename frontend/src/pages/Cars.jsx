@@ -106,7 +106,7 @@ const Cars = ({ inSinglePage }) => {
               >
                 <div className="relative h-72 overflow-hidden group bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
                   <img 
-                    src={car.image} 
+                    src={car.image?.startsWith('http') ? car.image : `${API_BASE_URL}${car.image}`} 
                     onError={(e) => {e.target.src='https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000&auto=format&fit=crop'}} 
                     alt={car.brand} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
