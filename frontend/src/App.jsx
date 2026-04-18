@@ -5,8 +5,10 @@ import Footer from './components/layout/Footer';
 import ScrollToTop from './components/common/ScrollToTop';
 import LuxeChatbot from './components/common/LuxeChatbot';
 import SkeletonLoader from './components/common/SkeletonLoader';
-import React from 'react';
 import { AlertCircle, Shield, Activity } from 'lucide-react';
+import { AuthContext } from './context/AuthContext';
+import { useContext, useEffect } from 'react';
+import { subscribeToPushNotifications } from './utils/pushNotificationHelper';
 
 // Lazy Loaded Pages for Blitz Speed
 const Home = lazy(() => import('./pages/Home'));
@@ -57,7 +59,14 @@ class ErrorBoundary extends React.Component {
 }
 
 const AppContent = () => {
+  const { user } = useContext(AuthContext);
   const location = useLocation();
+
+  useEffect(() => {
+    if (user) {
+      subscribeToPushNotifications(user);
+    }
+  }, [user]);
   const isAdminPath = location.pathname.startsWith('/admin');
   const isAuthPath = ['/login', '/register', '/forgot-password'].includes(location.pathname) || 
                      location.pathname.startsWith('/resetpassword');

@@ -2,6 +2,17 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const crypto = require('crypto');
 const { sendEmail, templates } = require('../utils/mailHelper');
+const webpush = require('web-push');
+const NotificationSubscription = require('../models/NotificationSubscription');
+
+// Configure web-push
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    'mailto:arebhai09@gmail.com',
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+}
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -155,6 +166,31 @@ const verifyKYC = async (req, res) => {
     if (user) {
       user.kycStatus = req.body.status; // 'verified' or 'rejected'
       const updatedUser = await user.save();
+
+      // SEND PUSH NOTIFICATION
+      const subscriptions = await NotificationSubscription.find({ user: user._id });
+      
+      const payload = JSON.stringify({
+        title: user.kycStatus === 'verified' ? 'KYC Approved! ✅' : 'KYC Rejected 🛡️',
+        message: user.kycStatus === 'verified' 
+          ? 'Congratulations! Your identity has been verified. You can now rent elite cars.' 
+          : 'Your identity verification was rejected. Please check your documents and try again.',
+        url: '/profile'
+      });
+
+      // Send to all devices registered by this user
+      const pushPromises = subscriptions.map(sub => 
+        webpush.sendNotification(sub.subscription, payload)
+          .catch(err => {
+            console.error('Push error:', err.endpoint);
+            if (err.statusCode === 410 || err.statusCode === 404) {
+              return NotificationSubscription.deleteOne({ _id: sub._id });
+            }
+          })
+      );
+      
+      await Promise.all(pushPromises);
+
       res.json({ kycStatus: updatedUser.kycStatus });
     } else {
       res.status(404).json({ message: 'User not found' });
@@ -279,4 +315,30 @@ const resetPassword = async (req, res) => {
   });
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC, forgotPassword, resetPassword };
+// @desc    Get VAPID Public Key
+// @route   GET /api/auth/vapid-key
+// @access  Public
+const getVapidPublicKey = async (req, res) => {
+  res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
+};
+
+// @desc    Subscribe for Push Notifications
+// @route   POST /api/auth/subscribe
+// @access  Private
+const subscribeUser = async (req, res) => {
+  const { subscription } = req.body;
+  
+  try {
+    // Save or update subscription
+    await NotificationSubscription.findOneAndUpdate(
+      { user: req.user._id, 'subscription.endpoint': subscription.endpoint },
+      { user: req.user._id, subscription },
+      { upsert: true, new: true }
+    );
+    res.status(201).json({ message: 'Subscribed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC, forgotPassword, resetPassword, getVapidPublicKey, subscribeUser };
