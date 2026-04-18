@@ -18,6 +18,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const BookingSuccess = lazy(() => import('./pages/BookingSuccess'));
 const MyBookings = lazy(() => import('./pages/MyBookings'));
 const Profile = lazy(() => import('./pages/Profile'));
+const AccountHub = lazy(() => import('./pages/AccountHub'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Services = lazy(() => import('./pages/Services'));
 const Terms = lazy(() => import('./pages/Terms'));
@@ -76,7 +77,9 @@ const AppContent = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/success" element={<BookingSuccess />} />
               <Route path="/my-bookings" element={<MyBookings />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile" element={<AccountHub />} />
+              <Route path="/profile/settings" element={<Profile />} />
+              <Route path="/profile/kyc" element={<Profile />} />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/terms" element={<Terms />} />

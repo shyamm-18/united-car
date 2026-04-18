@@ -1,11 +1,15 @@
 import { useState, useContext, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
-import { User, Mail, Lock, Shield, CheckCircle, AlertCircle, Loader2, Camera, Upload, FileImage, Clock } from 'lucide-react';
+import { User, Mail, Lock, Shield, CheckCircle, AlertCircle, Loader2, Camera, Upload, FileImage, Clock, ArrowLeft } from 'lucide-react';
 import API_BASE_URL from '../config';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Profile = () => {
   const { user, updateProfile } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isKycRoute = location.pathname === '/profile/kyc';
   
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
@@ -32,12 +36,12 @@ const Profile = () => {
 
   // Scroll to KYC if hash is #kyc
   useEffect(() => {
-    if (window.location.hash === '#kyc') {
+    if (window.location.hash === '#kyc' || isKycRoute) {
       setTimeout(() => {
         document.getElementById('kyc-section')?.scrollIntoView({ behavior: 'smooth' });
       }, 300);
     }
-  }, []);
+  }, [isKycRoute]);
 
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
@@ -146,6 +150,12 @@ const Profile = () => {
     <div className="min-h-screen pt-24 pb-24 bg-slate-50 dark:bg-slate-950 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <header className="mb-12">
+          <button
+            onClick={() => navigate('/profile')}
+            className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-blue-600 transition-colors mb-6"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Profile
+          </button>
           <h1 className="text-4xl font-black mb-2 dark:text-white">Account Settings</h1>
           <p className="text-slate-500 font-medium tracking-wide">Manage your identity and security across the UNITED CAR network.</p>
         </header>
