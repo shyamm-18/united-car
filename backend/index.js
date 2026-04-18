@@ -54,24 +54,28 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
 }));
 
 // Serve Frontend Static Files with Cache Control
-const frontendPath = path.join(__dirname, '../frontend/dist');
+const frontendPath = path.resolve(__dirname, '../frontend/dist');
 app.use(express.static(frontendPath, {
   maxAge: '1d',
-  etag: true
+  etag: true,
+  index: ['index.html']
 }));
 
-// API Health Check (at a specific route instead of root)
+// API Health Check
 app.get('/api/health', (req, res) => {
-  res.send('API is running...');
+  res.status(200).json({ status: 'active', timestamp: new Date() });
 });
 
 // Catch-all middleware to serve Frontend index.html for SPA routing
-app.use((req, res, next) => {
-  // Only handle GET requests that are not API calls or static files
-  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
-    return res.sendFile(path.join(frontendPath, 'index.html'));
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
+      if (err) {
+        console.error('FRONTEND SERVING ERROR:', err);
+        res.status(404).send('System Core Missing - Please rebuild frontend.');
+      }
+    });
   }
-  next();
 });
 
 const PORT = process.env.PORT || 5000;
