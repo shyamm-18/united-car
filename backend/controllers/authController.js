@@ -223,9 +223,9 @@ const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // Create reset url
-    // In local development, this points to frontend
-    const resetUrl = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
+    // Create reset URL pointing to FRONTEND (not backend)
+    const frontendUrl = process.env.FRONTEND_URL || 'https://united-car.vercel.app';
+    const resetUrl = `${frontendUrl}/resetpassword/${resetToken}`;
     
     const message = templates.passwordReset(user.name, resetUrl);
 
