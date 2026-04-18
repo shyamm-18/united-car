@@ -156,8 +156,14 @@ const Profile = () => {
           >
             <ArrowLeft className="h-4 w-4" /> Back to Profile
           </button>
-          <h1 className="text-4xl font-black mb-2 dark:text-white">Account Settings</h1>
-          <p className="text-slate-500 font-medium tracking-wide">Manage your identity and security across the UNITED CAR network.</p>
+          <h1 className="text-4xl font-black mb-2 dark:text-white">
+            {isKycRoute ? 'Identity Verification' : 'Account Settings'}
+          </h1>
+          <p className="text-slate-500 font-medium tracking-wide">
+            {isKycRoute 
+              ? 'Complete your KYC to unlock premium vehicle bookings.' 
+              : 'Manage your personal identity and advanced security settings.'}
+          </p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -226,133 +232,133 @@ const Profile = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <section className="space-y-6">
-                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Personal Information</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold ml-2">Display Name</label>
-                      <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold ml-2">Email Address</label>
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                <hr className="border-slate-100 dark:border-slate-800" />
-                
-                <section className="space-y-6">
-                  <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Update Security</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold ml-2">New Password (Optional)</label>
-                      <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Leave blank to keep current" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold ml-2">Confirm New Password</label>
-                      <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                <button type="submit" disabled={isUpdating} className="w-full py-5 rounded-3xl bg-blue-600 text-white font-black text-xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-3">
-                  {isUpdating ? <Loader2 className="animate-spin" /> : 'Save Changes'}
-                </button>
-              </form>
-              
-              <hr className="border-slate-100 dark:border-slate-800 my-12" />
-              
-              {/* KYC Section */}
-              <div id="kyc-section" className="space-y-6 scroll-mt-8">
-                <div>
-                  <h4 className="flex items-center gap-3 text-xl font-black dark:text-white mb-2">
-                    <Shield className="text-blue-500" /> Identity Verification (KYC)
-                  </h4>
-                  <p className="text-sm text-slate-500 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                    UNITED CAR requires a valid Aadhar Card photo and Driving License photo to authorize vehicle rentals. Verification is completed within <strong>1 hour</strong> of submission.
-                  </p>
-                </div>
-
-                {kycMessage && (
-                  <div className="p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 text-green-600 flex items-center gap-3 font-bold text-sm">
-                    <CheckCircle className="h-4 w-4 shrink-0" /> {kycMessage}
-                  </div>
-                )}
-                {kycError && (
-                  <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 text-red-600 flex items-center gap-3 font-bold text-sm">
-                    <AlertCircle className="h-4 w-4 shrink-0" /> {kycError}
-                  </div>
-                )}
-
-                {kycStatus === 'verified' ? (
-                  <div className="p-6 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 text-green-700 flex items-center gap-4">
-                    <CheckCircle className="h-8 w-8 shrink-0" />
-                    <div>
-                      <p className="font-black text-lg">Identity Verified</p>
-                      <p className="text-sm opacity-80">Your documents have been verified. You now have full access to all vehicles.</p>
-                    </div>
-                  </div>
-                ) : kycStatus === 'pending' ? (
-                  <div className="p-6 rounded-2xl bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 text-yellow-700 flex items-center gap-4">
-                    <Clock className="h-8 w-8 shrink-0 animate-pulse" />
-                    <div>
-                      <p className="font-black text-lg">Under Review</p>
-                      <p className="text-sm opacity-80">Your documents are being reviewed. Admin will verify within 1 hour.</p>
-                    </div>
-                  </div>
-                ) : (
-                  <form onSubmit={handleKycSubmit} className="space-y-6">
+              {!isKycRoute ? (
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <section className="space-y-6">
+                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Personal Information</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-sm font-bold ml-2 flex items-center gap-2">
-                          <FileImage className="h-4 w-4 text-blue-500" /> Aadhar Card / Government ID
-                        </label>
-                        <FileUploadBox
-                          preview={idPreview}
-                          inputRef={idRef}
-                          onChange={e => handleFileChange(e, 'id')}
-                          label="Click to upload Aadhar Card or any Govt. ID"
-                          icon={<Upload className="h-8 w-8" />}
-                        />
+                        <label className="text-sm font-bold ml-2">Display Name</label>
+                        <div className="relative">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                          <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-bold ml-2 flex items-center gap-2">
-                          <FileImage className="h-4 w-4 text-green-500" /> Driving License
-                        </label>
-                        <FileUploadBox
-                          preview={licensePreview}
-                          inputRef={licenseRef}
-                          onChange={e => handleFileChange(e, 'license')}
-                          label="Click to upload your Driving License"
-                          icon={<Upload className="h-8 w-8" />}
-                        />
+                        <label className="text-sm font-bold ml-2">Email Address</label>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                          <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+                        </div>
                       </div>
                     </div>
+                  </section>
 
-                    <button type="submit" disabled={isSubmittingKyc} className="px-8 py-4 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors flex items-center gap-3">
-                      {isSubmittingKyc ? (
-                        <><Loader2 className="animate-spin h-5 w-5" /> Uploading & Submitting...</>
-                      ) : (
-                        <><Shield className="h-5 w-5" /> Submit Documents for Review</>
-                      )}
-                    </button>
-                  </form>
-                )}
-              </div>
+                  <hr className="border-slate-100 dark:border-slate-800" />
+                  
+                  <section className="space-y-6">
+                    <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Update Security</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold ml-2">New Password (Optional)</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Leave blank to keep current" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold ml-2">Confirm New Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirm new password" className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium" />
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <button type="submit" disabled={isUpdating} className="w-full py-5 rounded-3xl bg-blue-600 text-white font-black text-xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-3">
+                    {isUpdating ? <Loader2 className="animate-spin" /> : 'Save Changes'}
+                  </button>
+                </form>
+              ) : (
+                /* KYC Section */
+                <div id="kyc-section" className="space-y-6 scroll-mt-8">
+                  <div>
+                    <h4 className="flex items-center gap-3 text-2xl font-black dark:text-white mb-2 tracking-tighter">
+                      <Shield className="text-blue-500 h-8 w-8" /> Verify Your Identity
+                    </h4>
+                    <p className="text-sm text-slate-500 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                      UNITED CAR requires a valid Government ID and Driving License to authorize vehicle rentals. Verification is completed within <strong>1 hour</strong>.
+                    </p>
+                  </div>
+
+                  {kycMessage && (
+                    <div className="p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 text-green-600 flex items-center gap-3 font-bold text-sm">
+                      <CheckCircle className="h-4 w-4 shrink-0" /> {kycMessage}
+                    </div>
+                  )}
+                  {kycError && (
+                    <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 text-red-600 flex items-center gap-3 font-bold text-sm">
+                      <AlertCircle className="h-4 w-4 shrink-0" /> {kycError}
+                    </div>
+                  )}
+
+                  {kycStatus === 'verified' ? (
+                    <div className="p-8 rounded-[2.5rem] bg-green-50 dark:bg-green-900/20 border border-green-200 text-green-700 flex items-center gap-6">
+                      <CheckCircle className="h-12 w-12 shrink-0" />
+                      <div>
+                        <p className="font-black text-2xl tracking-tight">Identity Verified</p>
+                        <p className="text-sm opacity-80 mt-1 font-medium">Your documents have been approved. You have unlimited access to the elite fleet.</p>
+                      </div>
+                    </div>
+                  ) : kycStatus === 'pending' ? (
+                    <div className="p-8 rounded-[2.5rem] bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 text-yellow-700 flex items-center gap-6">
+                      <Clock className="h-12 w-12 shrink-0 animate-pulse" />
+                      <div>
+                        <p className="font-black text-2xl tracking-tight">Under Review</p>
+                        <p className="text-sm opacity-80 mt-1 font-medium">Verification in progress. Expect response within 1 hour.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleKycSubmit} className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                          <label className="text-xs font-black uppercase tracking-widest ml-1 flex items-center gap-2 text-slate-400">
+                            <FileImage className="h-4 w-4" /> Government ID Photo
+                          </label>
+                          <FileUploadBox
+                            preview={idPreview}
+                            inputRef={idRef}
+                            onChange={e => handleFileChange(e, 'id')}
+                            label="Aadhar Card / Passport"
+                            icon={<Upload className="h-10 w-10 text-blue-500" />}
+                          />
+                        </div>
+                        <div className="space-y-3">
+                          <label className="text-xs font-black uppercase tracking-widest ml-1 flex items-center gap-2 text-slate-400">
+                            <FileImage className="h-4 w-4" /> Driving License Photo
+                          </label>
+                          <FileUploadBox
+                            preview={licensePreview}
+                            inputRef={licenseRef}
+                            onChange={e => handleFileChange(e, 'license')}
+                            label="Legal Driving Permit"
+                            icon={<Upload className="h-10 w-10 text-green-500" />}
+                          />
+                        </div>
+                      </div>
+
+                      <button type="submit" disabled={isSubmittingKyc} className="w-full py-5 rounded-[2rem] bg-slate-900 dark:bg-blue-600 text-white font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4">
+                        {isSubmittingKyc ? (
+                          <><Loader2 className="animate-spin h-6 w-6" /> Processing...</>
+                        ) : (
+                          <><Shield className="h-6 w-6" /> Submit Documents</>
+                        )}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )}
             </motion.div>
           </div>
         </div>
