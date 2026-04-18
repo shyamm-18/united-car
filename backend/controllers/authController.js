@@ -7,7 +7,8 @@ const { sendEmail, templates } = require('../utils/mailHelper');
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  let { name, email, password } = req.body;
+  email = email.toLowerCase();
 
   try {
     const userExists = await User.findOne({ email });
@@ -43,7 +44,8 @@ const registerUser = async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email.toLowerCase();
 
   try {
     const user = await User.findOne({ email });
@@ -198,7 +200,8 @@ const deleteUser = async (req, res) => {
 // @route   POST /api/auth/forgotpassword
 // @access  Public
 const forgotPassword = async (req, res) => {
-  const { email } = req.body;
+  let { email } = req.body;
+  email = email.toLowerCase();
 
   try {
     const user = await User.findOne({ email });
