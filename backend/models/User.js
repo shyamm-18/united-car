@@ -29,6 +29,16 @@ const userSchema = mongoose.Schema(
       email: { type: Boolean, default: true },
       sms: { type: Boolean, default: true },
     },
+    kycStatus: {
+      type: String,
+      enum: ['unsubmitted', 'pending', 'verified', 'rejected'],
+      default: 'unsubmitted'
+    },
+    documents: {
+      idProofUrl: { type: String, default: null },
+      licenseUrl: { type: String, default: null },
+      submittedAt: { type: Date, default: null }
+    }
   },
   {
     timestamps: true,

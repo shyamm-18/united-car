@@ -14,6 +14,12 @@ const Profile = () => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  
+  // KYC State
+  const [idProofUrl, setIdProofUrl] = useState(user?.documents?.idProofUrl || '');
+  const [licenseUrl, setLicenseUrl] = useState(user?.documents?.licenseUrl || '');
+  const [kycStatus, setKycStatus] = useState(user?.kycStatus || 'unsubmitted');
+  const [kycMessage, setKycMessage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +41,36 @@ const Profile = () => {
       setConfirmPassword('');
     } else {
       setError(result.message);
+    }
+  };
+
+  const handleKycSubmit = async (e) => {
+    e.preventDefault();
+    setKycMessage(null);
+    try {
+      // Assuming a generic mock URL if they didn't input anything
+      const payload = {
+         idProofUrl: idProofUrl || 'https://example.com/mock-id.jpg',
+         licenseUrl: licenseUrl || 'https://example.com/mock-license.jpg'
+      };
+      
+      const res = await fetch(`https://united-car.onrender.com/api/auth/profile/kyc`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setKycStatus(data.kycStatus);
+        setKycMessage('KYC Documents submitted and pending admin review.');
+      } else {
+        alert(data.message || 'Failed to submit KYC');
+      }
+    } catch (err) {
+      alert('Network error submitting KYC');
     }
   };
 
@@ -73,6 +109,18 @@ const Profile = () => {
                 </div>
                 <p className="text-sm font-medium leading-relaxed opacity-80">
                    Your profile is protected by enterprise-grade encryption and JWT authentication.
+                </p>
+             </div>
+
+             <div className={`glass p-6 rounded-[2.5rem] ${kycStatus === 'verified' ? 'bg-green-600/5 border-green-600/20 text-green-600' : (kycStatus === 'rejected' ? 'bg-red-600/5 border-red-600/20 text-red-600' : 'bg-orange-600/5 border-orange-600/20 text-orange-600')} dark:text-opacity-80`}>
+                <div className="flex items-center gap-3 mb-2 font-bold uppercase text-xs tracking-widest">
+                   <AlertCircle className="h-4 w-4" /> KYC Status
+                </div>
+                <p className="text-xl font-black capitalize tracking-tight">
+                   {kycStatus === 'unsubmitted' ? 'Not Verified' : kycStatus}
+                </p>
+                <p className="text-xs font-medium mt-2 opacity-80">
+                   {kycStatus === 'verified' ? 'You have full access to rent luxury vehicles.' : 'Complete verification to unlock vehicle bookings.'}
                 </p>
              </div>
           </div>
@@ -169,6 +217,60 @@ const Profile = () => {
                   {isUpdating ? <Loader2 className="animate-spin" /> : 'Save Changes'}
                 </button>
               </form>
+              
+              <hr className="border-slate-100 dark:border-slate-800 my-12" />
+              
+              <div className="space-y-6">
+                 <h4 className="flex items-center gap-3 text-xl font-black dark:text-white mb-2">
+                    <Shield className="text-blue-500"/> Identity Verification (KYC)
+                 </h4>
+                 <p className="text-sm text-slate-500 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                    UNITED CAR requires a valid government ID and Driving License to authorize high-end vehicle rentals.
+                 </p>
+
+                 {kycMessage && (
+                    <div className="p-4 rounded-2xl bg-green-50 text-green-600 flex items-center gap-3 font-bold text-sm">
+                      <CheckCircle className="h-4 w-4" /> {kycMessage}
+                    </div>
+                  )}
+                 
+                 <form onSubmit={handleKycSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div className="space-y-2">
+                          <label className="text-sm font-bold ml-2">Government ID URL</label>
+                          <input 
+                            type="text" 
+                            placeholder="Enter image URL or path"
+                            value={idProofUrl}
+                            onChange={(e) => setIdProofUrl(e.target.value)}
+                            disabled={kycStatus === 'verified' || kycStatus === 'pending'}
+                            className="w-full px-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 disabled:opacity-50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium text-sm" 
+                          />
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-sm font-bold ml-2">Driving License URL</label>
+                          <input 
+                            type="text" 
+                            placeholder="Enter image URL or path"
+                            value={licenseUrl}
+                            onChange={(e) => setLicenseUrl(e.target.value)}
+                            disabled={kycStatus === 'verified' || kycStatus === 'pending'}
+                            className="w-full px-4 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 disabled:opacity-50 border-none outline-none focus:ring-2 focus:ring-blue-500 font-medium text-sm" 
+                          />
+                       </div>
+                    </div>
+                    
+                    {kycStatus !== 'verified' && kycStatus !== 'pending' && (
+                       <button 
+                         type="submit" 
+                         className="px-8 py-4 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+                       >
+                         Submit Documents for Review
+                       </button>
+                    )}
+                 </form>
+              </div>
+              
             </motion.div>
           </div>
         </div>

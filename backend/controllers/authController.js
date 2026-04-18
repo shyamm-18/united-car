@@ -58,6 +58,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        kycStatus: user.kycStatus,
         token: generateToken(user._id),
       });
     } else {
@@ -80,6 +81,8 @@ const getUserProfile = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      kycStatus: user.kycStatus,
+      documents: user.documents,
     });
   } else {
     res.status(404).json({ message: 'User not found' });
@@ -106,10 +109,54 @@ const updateUserProfile = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       role: updatedUser.role,
+      kycStatus: updatedUser.kycStatus,
+      documents: updatedUser.documents,
       token: generateToken(updatedUser._id),
     });
   } else {
     res.status(404).json({ message: 'User not found' });
+  }
+};
+
+// @desc    Submit KYC documents
+// @route   PUT /api/auth/profile/kyc
+// @access  Private
+const submitKYC = async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    user.documents = {
+      idProofUrl: req.body.idProofUrl || user.documents?.idProofUrl,
+      licenseUrl: req.body.licenseUrl || user.documents?.licenseUrl,
+      submittedAt: new Date()
+    };
+    user.kycStatus = 'pending';
+
+    const updatedUser = await user.save();
+    res.json({
+      kycStatus: updatedUser.kycStatus,
+      documents: updatedUser.documents
+    });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+};
+
+// @desc    Verify KYC (Admin)
+// @route   PUT /api/auth/users/:id/kyc
+// @access  Private/Admin
+const verifyKYC = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.kycStatus = req.body.status; // 'verified' or 'rejected'
+      const updatedUser = await user.save();
+      res.json({ kycStatus: updatedUser.kycStatus });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -145,4 +192,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser };
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC };

@@ -49,6 +49,27 @@ const AdminUsers = () => {
     }
   };
 
+  const handleVerifyKYC = async (id, status) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/users/${id}/kyc`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}` 
+        },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) {
+         setUsers(users.map(u => u._id === id ? { ...u, kycStatus: status } : u));
+         alert(`User KYC successfully marked as ${status}`);
+      } else {
+         alert('Failed to update KYC status');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     u.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -59,7 +80,7 @@ const AdminUsers = () => {
       <header className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
            <h1 className="text-4xl font-black mb-2 dark:text-white">Identity Governance</h1>
-           <p className="text-slate-500 font-medium">Manage UNITED CAR users and system roles.</p>
+           <p className="text-slate-500 font-medium">Manage UNITED CAR users, KYC approvals, and system roles.</p>
         </div>
         <div className="relative max-w-sm w-full">
            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -99,7 +120,7 @@ const AdminUsers = () => {
               <tr className="bg-slate-50 dark:bg-white/5 text-left">
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">User Profile</th>
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">Role</th>
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">Joined Date</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">KYC Status & Joined</th>
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
@@ -131,16 +152,30 @@ const AdminUsers = () => {
                      </span>
                   </td>
                   <td className="px-8 py-6 text-sm font-medium text-slate-500">
-                     {new Date(u.createdAt).toLocaleDateString()}
+                     <div className="flex flex-col gap-1">
+                        <span className={`px-3 py-1 rounded-full text-[10px] w-fit font-bold uppercase ${u.kycStatus === 'verified' ? 'bg-green-100 text-green-600' : (u.kycStatus === 'pending' ? 'bg-orange-100 text-orange-600' : 'bg-slate-100 text-slate-500')}`}>
+                           {u.kycStatus || 'unsubmitted'}
+                        </span>
+                        <div className="text-xs">{new Date(u.createdAt).toLocaleDateString()}</div>
+                     </div>
                   </td>
                   <td className="px-8 py-6">
-                     <button 
-                       onClick={() => handleDelete(u._id)}
-                       disabled={u.role === 'admin'}
-                       className="p-3 rounded-xl bg-red-50 dark:bg-red-900/10 text-red-500 hover:bg-red-500 hover:text-white transition-all disabled:opacity-30 disabled:hover:bg-red-50"
-                     >
-                        <Trash2 className="h-4 w-4" />
-                     </button>
+                     <div className="flex items-center gap-2">
+                         {u.kycStatus === 'pending' && (
+                            <>
+                              <button onClick={() => handleVerifyKYC(u._id, 'verified')} className="p-2 border border-green-500 text-green-500 rounded-lg hover:bg-green-500 hover:text-white transition-all text-xs font-bold">Approve KYC</button>
+                              <button onClick={() => handleVerifyKYC(u._id, 'rejected')} className="p-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all text-xs font-bold">Reject</button>
+                            </>
+                         )}
+                         <button 
+                           onClick={() => handleDelete(u._id)}
+                           disabled={u.role === 'admin'}
+                           className="p-3 rounded-xl bg-red-50 dark:bg-red-900/10 text-red-500 hover:bg-red-500 hover:text-white transition-all disabled:opacity-30 disabled:hover:bg-red-50"
+                           title="Delete User"
+                         >
+                            <Trash2 className="h-4 w-4" />
+                         </button>
+                     </div>
                   </td>
                 </tr>
               ))}

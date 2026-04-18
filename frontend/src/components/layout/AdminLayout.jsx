@@ -12,6 +12,7 @@ const AdminLayout = ({ children }) => {
     { title: 'Command Center', path: '/admin', icon: <LayoutDashboard className="h-5 w-5" /> },
     { title: 'Fleet Logistics', path: '/admin/fleet', icon: <Car className="h-5 w-5" /> },
     { title: 'Global Tracking', path: '/admin/tracking', icon: <Navigation className="h-5 w-5" /> },
+    { title: 'Live Map Telemetry', path: '/admin/map', icon: <Activity className="h-5 w-5" /> },
     { title: 'Reservations', path: '/admin/bookings', icon: <Calendar className="h-5 w-5" /> },
     { title: 'Client Identities', path: '/admin/users', icon: <Users className="h-5 w-5" /> },
   ];

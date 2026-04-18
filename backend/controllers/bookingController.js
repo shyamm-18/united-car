@@ -14,6 +14,21 @@ const addBookingItems = async (req, res) => {
       return res.status(400).json({ message: 'Missing required booking information' });
     }
 
+    // 0. Airbnb-style Live Calendar Constraint (Overlap Prevention)
+    const existingBooking = await Booking.findOne({
+      car: carId,
+      status: { $ne: 'cancelled' },
+      $or: [
+        { startDate: { $lt: new Date(endDate) }, endDate: { $gt: new Date(startDate) } }
+      ]
+    });
+
+    if (existingBooking) {
+      return res.status(400).json({ 
+        message: 'These dates are no longer available for this vehicle. Please select a different time frame.' 
+      });
+    }
+
     const booking = new Booking({
       user: req.user._id,
       car: carId,
@@ -161,4 +176,19 @@ const updateBookingTelemetry = async (req, res) => {
   }
 };
 
-module.exports = { addBookingItems, getMyBookings, getBookings, cancelBooking, updateBookingTelemetry };
+// @desc    Get bookings for a specific car to block dates
+// @route   GET /api/bookings/car/:id
+// @access  Public
+const getCarBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ 
+      car: req.params.id,
+      status: { $ne: 'cancelled' }
+    }).select('startDate endDate');
+    res.json(bookings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { addBookingItems, getMyBookings, getBookings, cancelBooking, updateBookingTelemetry, getCarBookings };

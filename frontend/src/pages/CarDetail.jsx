@@ -31,6 +31,11 @@ const CarDetail = () => {
   const [totalDays, setTotalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedAddons, setSelectedAddons] = useState([]);
+  const [surgeApplied, setSurgeApplied] = useState(false);
+  
+  // Airbnb Calendar States
+  const [bookedDates, setBookedDates] = useState([]);
+  const [isOverlapping, setIsOverlapping] = useState(false);
 
   // DEFINED AT TOP SCOPE TO PREVENT ReferenceError
   const fetchCar = useCallback(async () => {
@@ -41,6 +46,16 @@ const CarDetail = () => {
         const data = await res.json();
         console.log("Server Handshake Successful. Received Car:", data.model);
         setCar(data);
+        
+        // Fetch Booked Dates for this vehicle
+        try {
+          const bRes = await fetch(`${API_BASE_URL}/api/bookings/car/${data._id}`);
+          if (bRes.ok) {
+            const bData = await bRes.json();
+            setBookedDates(bData);
+          }
+        } catch (e) { console.error('Failed to fetch booked dates'); }
+        
       } else {
         console.warn("Server Handshake Failed. Initializing MOCK fallback protocols...");
         const fallback = MOCK_CARS.find(c => c._id === id) || 
@@ -79,14 +94,45 @@ const CarDetail = () => {
       setTotalDays(days);
       
       if (car) {
-        let basePrice = days * (car.pricePerDay || car.price);
+        let calculatedBasePrice = 0;
+        let hasSurge = false;
+        
+        // Surge Pricing Algorithm: +20% for Saturday/Sunday
+        for (let i = 0; i < days; i++) {
+          const currentDate = new Date(start.getTime() + (i * 24 * 60 * 60 * 1000));
+          const dayOfWeek = currentDate.getDay();
+          
+          if (dayOfWeek === 0 || dayOfWeek === 6) { // Sunday or Saturday
+             calculatedBasePrice += (car.pricePerDay || car.price) * 1.2;
+             hasSurge = true;
+          } else {
+             calculatedBasePrice += (car.pricePerDay || car.price);
+          }
+        }
+        
+        setSurgeApplied(hasSurge);
+
         let addonsPrice = selectedAddons.reduce((acc, addon) => {
           return acc + (addon.type === 'per_day' ? addon.price * days : addon.price);
         }, 0);
-        setTotalPrice(basePrice + addonsPrice);
+        
+        setTotalPrice(Math.round(calculatedBasePrice + addonsPrice));
+        
+        // Airbnb Validation Logic
+        let overlap = false;
+        bookedDates.forEach(b => {
+           const bX = new Date(b.startDate).getTime();
+           const bY = new Date(b.endDate).getTime();
+           if (start.getTime() < bY && end.getTime() > bX) {
+              overlap = true;
+           }
+        });
+        setIsOverlapping(overlap);
       }
+    } else {
+       setIsOverlapping(false);
     }
-  }, [startDate, endDate, car, selectedAddons]);
+  }, [startDate, endDate, car, selectedAddons, bookedDates]);
 
   const handleContinue = () => {
     if (!user) {
@@ -241,9 +287,14 @@ const CarDetail = () => {
                  <button onClick={() => setIsMonthly(true)} className={`flex-grow py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${isMonthly ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500'}`}> MONTHLY </button>
               </div>
 
-              <div className="mb-8">
-                  <span className="text-4xl font-black dark:text-white">₹{(isMonthly ? (car?.monthlyPrice || 45000) : (car?.pricePerDay || car?.price))?.toLocaleString()}</span>
-                  <span className="text-slate-500 font-medium ml-2">/ {isMonthly ? 'month' : 'day'}</span>
+              <div className="mb-8 relative">
+                  <span className="text-4xl font-black dark:text-white">₹{(isMonthly ? (car?.monthlyPrice || 45000) : (totalPrice || car?.pricePerDay || car?.price))?.toLocaleString()}</span>
+                  <span className="text-slate-500 font-medium ml-2">/ {isMonthly ? 'month' : (totalDays > 0 ? 'total' : 'day')}</span>
+                  {surgeApplied && !isMonthly && (
+                    <div className="absolute -top-3 -right-2 bg-red-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shadow-lg shadow-red-500/40 animate-pulse">
+                      High Demand Surge
+                    </div>
+                  )}
               </div>
 
               {!isMonthly && (
@@ -280,8 +331,29 @@ const CarDetail = () => {
                 </div>
               )}
 
-              <button onClick={handleContinue} className="w-full py-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-xl shadow-blue-500/30 transition-all">
-                {user ? (isMonthly ? 'Confirm Subscription' : 'Continue to Payment') : 'Login Required'}
+              {isOverlapping && (
+                 <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold p-4 rounded-xl flex items-center justify-center gap-2">
+                    <X className="h-4 w-4" /> This vehicle is already booked during these dates.
+                 </div>
+              )}
+
+              <button 
+                onClick={() => {
+                   if (user && user.kycStatus !== 'verified') {
+                      alert('Please complete your KYC Verification in your Profile before booking.');
+                      navigate('/profile');
+                      return;
+                   }
+                   handleContinue();
+                }} 
+                disabled={isOverlapping}
+                className="w-full py-5 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold text-lg shadow-xl shadow-blue-500/30 transition-all"
+              >
+                {user 
+                   ? (isOverlapping 
+                        ? 'Dates Unavailable' 
+                        : (user.kycStatus !== 'verified' ? 'Verify KYC to Book' : (isMonthly ? 'Confirm Subscription' : 'Continue to Payment'))) 
+                   : 'Login Required'}
               </button>
             </div>
           </div>
