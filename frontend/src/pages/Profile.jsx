@@ -53,7 +53,11 @@ const Profile = () => {
 
   // Helper for faster uploads via compression
   const compressImage = (file) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        return resolve(file); // Don't compress non-images
+      }
+
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
@@ -61,36 +65,57 @@ const Profile = () => {
         img.src = event.target.result;
         img.onload = () => {
           const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
           let width = img.width;
           let height = img.height;
-          const maxDim = 1200; // Optimal for verified preview
+
           if (width > height) {
-            if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
           } else {
-            if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
           }
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7);
+          canvas.toBlob((blob) => resolve(blob || file), 'image/jpeg', 0.82);
         };
+        img.onerror = () => resolve(file); // Fallback to original if img fails to load
       };
+      reader.onerror = () => resolve(file); // Fallback to original if reader fails
     });
   };
 
   const uploadFile = async (file, fieldName) => {
-    const compressed = await compressImage(file);
-    const formData = new FormData();
-    formData.append('image', compressed, 'upload.jpg');
-    const res = await fetch(`${API_BASE_URL}/api/upload`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${user.token}` },
-      body: formData
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Upload failed');
-    return data.url;
+    try {
+      const compressed = await compressImage(file);
+      const formData = new FormData();
+      formData.append('image', compressed, 'upload.jpg');
+      
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${user.token}` },
+        body: formData
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        return data.url;
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || 'File upload failed');
+      }
+    } catch (err) {
+      console.error(`Upload error for ${fieldName}:`, err);
+      throw err;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -125,10 +150,8 @@ const Profile = () => {
 
     setIsSubmittingKyc(true);
     try {
-      const [idUrl, licenseUrl] = await Promise.all([
-        uploadFile(idFile, 'idProof'),
-        uploadFile(licenseFile, 'license')
-      ]);
+      const idUrl = await uploadFile(idFile, 'id');
+      const licenseUrl = await uploadFile(licenseFile, 'license');
 
       const res = await fetch(`${API_BASE_URL}/api/auth/profile/kyc`, {
         method: 'PUT',
@@ -136,17 +159,23 @@ const Profile = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user.token}`
         },
-        body: JSON.stringify({ idProofUrl: idUrl, licenseUrl })
+        body: JSON.stringify({
+          idProofUrl: idUrl,
+          licenseUrl: licenseUrl
+        })
       });
-      const data = await res.json();
+
       if (res.ok) {
-        setKycStatus(data.kycStatus);
-        setKycMessage('Documents submitted! Admin will verify within 1 hour.');
+        setKycStatus('pending');
+        setKycMessage('Identity documents submitted successfully! Verification pending.');
+        updateProfile({ ...user, kycStatus: 'pending' });
       } else {
-        setKycError(data.message || 'Failed to submit KYC');
+        const data = await res.json();
+        setKycError(data.message || 'Submission failed. Please try again.');
       }
     } catch (err) {
-      setKycError('Upload failed. Please try again.');
+      console.error('KYC Submission Error:', err);
+      setKycError(err.message || 'Upload failed. Please check your internet and try again.');
     } finally {
       setIsSubmittingKyc(false);
     }
