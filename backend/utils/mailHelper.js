@@ -39,7 +39,7 @@ const createTransporter = async () => {
     }
 };
 
-const sendEmail = async (to, subject, html) => {
+const sendEmail = async (to, subject, html, attachments = []) => {
     try {
         const transporter = await createTransporter();
         const info = await transporter.sendMail({
@@ -47,6 +47,7 @@ const sendEmail = async (to, subject, html) => {
             to,
             subject,
             html,
+            attachments
         });
 
         if (info.messageId !== 'mock-id' && !process.env.EMAIL_USER) {

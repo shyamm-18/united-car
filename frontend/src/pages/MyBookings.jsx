@@ -134,9 +134,34 @@ const MyBookings = () => {
                           <h3 className="text-2xl font-black dark:text-white leading-none mb-2">{item.car.brand} {item.car.model}</h3>
                           <span className="text-xs font-black text-blue-600 uppercase tracking-widest">{item.car.type}</span>
                        </div>
-                       <div className="text-right">
-                          <div className="text-2xl font-black dark:text-white">₹{item.price?.toLocaleString()}</div>
-                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{activeTab === 'subscriptions' ? 'Monthly' : 'Total'} Fee</div>
+                       <div className="text-right flex flex-col items-end gap-3">
+                          <div>
+                            <div className="text-2xl font-black dark:text-white">₹{item.price?.toLocaleString()}</div>
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{activeTab === 'subscriptions' ? 'Monthly' : 'Total'} Fee</div>
+                          </div>
+                          
+                          {item.status !== 'cancelled' && (
+                            <button
+                              onClick={async () => {
+                                const res = await fetch(`${API_BASE_URL}/api/bookings/${item._id}/agreement`, {
+                                  headers: { 'Authorization': `Bearer ${user.token}` }
+                                });
+                                if (res.ok) {
+                                  const blob = await res.blob();
+                                  const url = window.URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = `Rental_Agreement_${item._id}.pdf`;
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  window.URL.revokeObjectURL(url);
+                                }
+                              }}
+                              className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl text-[10px] font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-all uppercase tracking-widest border border-white/10"
+                            >
+                              <CreditCard className="h-3.3 w-3.5" /> Agreement
+                            </button>
+                          )}
                        </div>
                     </div>
 

@@ -2,6 +2,9 @@ const Booking = require('../models/Booking');
 const Car = require('../models/Car');
 const User = require('../models/User');
 const { createNotification } = require('./notificationController');
+const { sendEmail, templates } = require('../utils/mailHelper');
+const { generateRentalAgreement } = require('../utils/pdfHelper');
+const { PassThrough } = require('stream');
 
 // @desc    Create new booking
 // @route   POST /api/bookings
@@ -70,6 +73,35 @@ const addBookingItems = async (req, res) => {
     }
 
     res.status(201).json(createdBooking);
+
+    // 3. Generate and Email Rental Agreement PDF
+    try {
+      const fullBooking = await Booking.findById(createdBooking._id)
+        .populate('user', 'name email kycStatus')
+        .populate('car', 'brand model type');
+
+      const stream = new PassThrough();
+      const buffers = [];
+      stream.on('data', b => buffers.push(b));
+      stream.on('end', async () => {
+        const pdfBuffer = Buffer.concat(buffers);
+        const emailHtml = templates.bookingConfirmation(req.user.name, `${car.brand} ${car.model}`, startDate);
+        
+        await sendEmail(
+          req.user.email, 
+          'Rental Agreement & Confirmation - UNITED CAR', 
+          emailHtml,
+          [{
+            filename: `Rental_Agreement_${createdBooking._id}.pdf`,
+            content: pdfBuffer
+          }]
+        );
+      });
+
+      generateRentalAgreement(fullBooking, stream);
+    } catch (err) {
+      console.error('PDF Generation or Email failed:', err);
+    }
 
     // Simulated "Payment Success" Notification (5sec delay)
     setTimeout(async () => {
@@ -191,4 +223,31 @@ const getCarBookings = async (req, res) => {
   }
 };
 
-module.exports = { addBookingItems, getMyBookings, getBookings, cancelBooking, updateBookingTelemetry, getCarBookings };
+// @desc    Get booking agreement PDF
+// @route   GET /api/bookings/:id/agreement
+// @access  Private
+const getBookingAgreement = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate('user', 'name email kycStatus')
+      .populate('car', 'brand model type');
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    // Check ownership
+    if (booking.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(401).json({ message: 'Not authorized' });
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Rental_Agreement_${booking._id}.pdf`);
+
+    generateRentalAgreement(booking, res);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { addBookingItems, getMyBookings, getBookings, cancelBooking, updateBookingTelemetry, getCarBookings, getBookingAgreement };
