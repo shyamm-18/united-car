@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Maximize2, Camera, Box, ChevronLeft, ChevronRight, Info, Zap, ChevronDown } from 'lucide-react';
+import { RotateCcw, Maximize2, Camera, Box, ChevronLeft, ChevronRight, Info, Zap } from 'lucide-react';
+import API_BASE_URL from '../../config';
 
 const CarGallery = ({ car }) => {
   const [activeTab, setActiveTab] = useState('gallery'); 
   const [viewMode, setViewMode] = useState('Exterior'); 
-  const [isFullScreen, setIsFullScreen] = useState(false);
   
   // 360 State
   const [rotationIndex, setRotationIndex] = useState(0);
@@ -14,24 +14,63 @@ const CarGallery = ({ car }) => {
   const containerRef = useRef(null);
   const lastX = useRef(0);
 
-  // ... (Keeping existing effects and handlers)
+  // 360 Images
+  const images360 = car?.images360?.length > 0 ? car.images360 : [
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=30',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=60',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=90',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=120',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=150',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=180',
+    'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2070&auto=format&fit=crop&hue=210',
+  ];
+
+  // Preload Images for smooth rotation
+  useEffect(() => {
+    images360.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [images360]);
+
+  // Auto-rotate logic
+  useEffect(() => {
+    let interval;
+    if (activeTab === '360' && autoRotate && !isRotating) {
+      interval = setInterval(() => {
+        setRotationIndex((prev) => (prev + 1) % images360.length);
+      }, 150);
+    }
+    return () => clearInterval(interval);
+  }, [activeTab, autoRotate, isRotating, images360.length]);
+
+  // Handle Drag/Swipe Rotation
+  const handleStart = (clientX) => {
+    setIsRotating(true);
+    setAutoRotate(false);
+    lastX.current = clientX;
+  };
+
+  const handleMove = (clientX) => {
+    if (!isRotating) return;
+    const deltaX = clientX - lastX.current;
+    const threshold = 12; // Lower for more sensitivity
+    
+    if (Math.abs(deltaX) > threshold) {
+      const framesToMove = Math.floor(Math.abs(deltaX) / threshold);
+      const direction = deltaX > 0 ? -1 : 1;
+      setRotationIndex(prev => (prev + (direction * framesToMove) + images360.length) % images360.length);
+      lastX.current = clientX - (deltaX % threshold);
+    }
+  };
+
+  const handleEnd = () => setIsRotating(false);
 
   if (!car) return <div className="aspect-[16/9] w-full rounded-[3rem] bg-slate-100 dark:bg-slate-800 animate-pulse"></div>;
 
-  // Robust Gallery Filtering
-  const galleryImages = car?.gallery?.length > 0 ? car.gallery : [];
-  
-  // Ensure the main image is always at least in the Exterior category if not already present
-  const fullGallery = [...galleryImages];
-  if (!fullGallery.find(img => img.category === 'Exterior')) {
-    fullGallery.unshift({ url: car?.image, category: 'Exterior' });
-  }
-
-  const filteredGallery = fullGallery.filter(img => img.category === viewMode || viewMode === 'All');
-  
-  // Final safety fallback
-  const displayGallery = filteredGallery.length > 0 ? filteredGallery : [{ url: car?.image, category: 'Exterior' }];
-  
+  const galleryImages = car?.gallery?.length > 0 ? car.gallery : [{ url: car?.image, category: 'Exterior' }];
+  const filteredGallery = galleryImages.filter(img => img.category === viewMode || viewMode === 'All');
   const [galleryIndex, setGalleryIndex] = useState(0);
 
   return (
@@ -88,13 +127,13 @@ const CarGallery = ({ car }) => {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.02 }}
-              className="absolute inset-0 bg-slate-950/20"
+              className="absolute inset-0"
             >
-              <img src={displayGallery[galleryIndex]?.url} className="w-full h-full object-contain" alt="Gallery" />
+              <img src={filteredGallery[galleryIndex]?.url?.startsWith('http') ? filteredGallery[galleryIndex].url : `${API_BASE_URL}${filteredGallery[galleryIndex]?.url}`} className="w-full h-full object-cover" alt="Gallery" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
               
-              <button onClick={() => setGalleryIndex(prev => (prev - 1 + displayGallery.length) % displayGallery.length)} className="absolute left-6 top-1/2 -translate-y-1/2 p-4 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-blue-600 transition-all shadow-2xl z-20"><ChevronLeft className="h-6 w-6" /></button>
-              <button onClick={() => setGalleryIndex(prev => (prev + 1) % displayGallery.length)} className="absolute right-6 top-1/2 -translate-y-1/2 p-4 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-blue-600 transition-all shadow-2xl z-20"><ChevronRight className="h-6 w-6" /></button>
+              <button onClick={() => setGalleryIndex(prev => (prev - 1 + filteredGallery.length) % filteredGallery.length)} className="absolute left-6 top-1/2 -translate-y-1/2 p-4 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-blue-600 transition-all shadow-2xl"><ChevronLeft className="h-6 w-6" /></button>
+              <button onClick={() => setGalleryIndex(prev => (prev + 1) % filteredGallery.length)} className="absolute right-6 top-1/2 -translate-y-1/2 p-4 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-blue-600 transition-all shadow-2xl"><ChevronRight className="h-6 w-6" /></button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -117,51 +156,10 @@ const CarGallery = ({ car }) => {
            </div>
            <div className="flex gap-2 sm:gap-3 items-center">
               <div className="hidden sm:flex bg-blue-600/90 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-lg items-center gap-2 backdrop-blur-md border border-white/20"><Zap className="h-3 w-3 fill-white" /> 4K Resolution</div>
-              <button 
-                onClick={() => setIsFullScreen(true)}
-                className="p-2 sm:p-3 bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 text-white hover:bg-white hover:text-slate-900 transition-all shadow-xl"
-              >
-                <Maximize2 className="h-4 sm:h-5 w-4 sm:w-5" />
-              </button>
+              <button className="p-2 sm:p-3 bg-white/10 backdrop-blur-md rounded-lg sm:rounded-xl border border-white/20 text-white hover:bg-white hover:text-slate-900 transition-all shadow-xl"><Maximize2 className="h-4 sm:h-5 w-4 sm:w-5" /></button>
            </div>
         </div>
       </div>
-
-      {/* Full Screen Modal Overlay */}
-      <AnimatePresence>
-        {isFullScreen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[999] bg-slate-950 flex flex-col items-center justify-center p-4 md:p-12"
-          >
-             <button 
-               onClick={() => setIsFullScreen(false)}
-               className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors z-[1000] p-4 bg-white/5 rounded-full backdrop-blur-xl"
-             >
-                <ChevronDown className="h-8 w-8 rotate-180" />
-             </button>
-
-             <motion.div 
-               initial={{ scale: 0.9, opacity: 0 }}
-               animate={{ scale: 1, opacity: 1 }}
-               className="relative w-full h-full flex items-center justify-center"
-             >
-               <img 
-                 src={activeTab === '360' ? images360[rotationIndex] : displayGallery[galleryIndex]?.url} 
-                 className="max-w-full max-h-full object-contain rounded-3xl"
-                 alt="Full Screen View"
-               />
-               
-               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-2xl px-12 py-4 rounded-full border border-white/10 text-white flex flex-col items-center gap-1">
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500">Master Detail View</span>
-                  <p className="text-xl font-bold tracking-tight">{car.brand} {car.model} — {activeTab.toUpperCase()}</p>
-               </div>
-             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-4">
         <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/5">
@@ -192,8 +190,8 @@ const CarGallery = ({ car }) => {
       <AnimatePresence>
         {activeTab === 'gallery' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
-             {displayGallery.map((img, i) => (
-               <button key={i} onClick={() => setGalleryIndex(i)} className={`relative h-24 w-40 shrink-0 rounded-3xl overflow-hidden transition-all duration-500 ${galleryIndex === i ? 'ring-4 ring-blue-500 ring-offset-4 dark:ring-offset-slate-950 scale-105 z-10' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}><img src={img.url} className="w-full h-full object-cover" alt="Thumb" /></button>
+             {filteredGallery.map((img, i) => (
+               <button key={i} onClick={() => setGalleryIndex(i)} className={`relative h-24 w-40 shrink-0 rounded-3xl overflow-hidden transition-all duration-500 ${galleryIndex === i ? 'ring-4 ring-blue-500 ring-offset-4 dark:ring-offset-slate-950 scale-105 z-10' : 'opacity-40 grayscale hover:grayscale-0 hover:opacity-100'}`}><img src={img.url?.startsWith('http') ? img.url : `${API_BASE_URL}${img.url}`} className="w-full h-full object-cover" alt="Thumb" /></button>
              ))}
           </motion.div>
         )}
