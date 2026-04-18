@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, User, Car, LogOut, Sun, Moon, ShieldCheck, CalendarDays, Settings, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,7 +13,18 @@ const Navbar = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
 
   return (
@@ -34,8 +45,11 @@ const Navbar = () => {
           
           <div className="hidden md:flex space-x-8">
             <Link to="/" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.home')}</Link>
-            <a href="/#fleet" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.fleet')}</a >
+            <a href="/#fleet" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.fleet')}</a>
             <Link to="/unlimited" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">{t('nav.unlimited')}</Link>
+            {user && (
+              <Link to="/profile" className="font-medium hover:text-blue-600 transition-colors uppercase text-[11px] tracking-widest">Profile</Link>
+            )}
             {user?.email === 'arebhai09@gmail.com' && (
               <Link 
                 to="/admin" 
@@ -48,27 +62,88 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-6">
-                <Link to="/my-bookings" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors flex items-center">
-                  <User className="h-5 w-5 mr-2" /> {user.name}
-                </Link>
-                {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
-                  <Link 
-                    to="/admin" 
-                    className="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-xl hover:scale-105 transition-transform"
+              <div className="flex items-center space-x-4" ref={profileMenuRef}>
+                {/* Avatar Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group"
                   >
-                    Dashboard
-                  </Link>
-                )}
-                <Link to="/profile" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors flex items-center">
-                  Settings
-                </Link>
-                <button 
-                  onClick={logout} 
-                  className="flex items-center text-slate-500 hover:text-red-500 transition-colors font-medium"
-                >
-                  <LogOut className="h-5 w-5 mr-1" /> Logout
-                </button>
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2563eb&color=fff&size=64`}
+                      alt={user.name}
+                      className="w-8 h-8 rounded-full border-2 border-blue-200 dark:border-blue-800"
+                    />
+                    <span className="font-semibold text-sm text-slate-700 dark:text-slate-200 max-w-[100px] truncate">{user.name}</span>
+                    <ChevronRight className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isProfileMenuOpen ? 'rotate-90' : ''}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isProfileMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden z-50"
+                      >
+                        {/* User info header */}
+                        <div className="px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700">
+                          <p className="font-bold text-white text-sm truncate">{user.name}</p>
+                          <p className="text-blue-100 text-[11px] truncate">{user.email}</p>
+                        </div>
+
+                        <div className="py-1">
+                          <Link
+                            to="/my-bookings"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            <CalendarDays className="h-4 w-4 text-blue-500" /> My Reservations
+                          </Link>
+                          <Link
+                            to="/profile"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            <Settings className="h-4 w-4 text-slate-500" /> Account Settings
+                          </Link>
+                          <Link
+                            to="/profile#kyc"
+                            onClick={() => setIsProfileMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            <ShieldCheck className="h-4 w-4 text-green-500" /> Identity Verification
+                            {user.kycStatus === 'pending' && (
+                              <span className="ml-auto text-[10px] font-black bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">Pending</span>
+                            )}
+                            {!user.kycStatus || user.kycStatus === 'unsubmitted' ? (
+                              <span className="ml-auto text-[10px] font-black bg-red-100 text-red-500 px-2 py-0.5 rounded-full">Required</span>
+                            ) : null}
+                          </Link>
+                          {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
+                            <Link
+                              to="/admin"
+                              onClick={() => setIsProfileMenuOpen(false)}
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                            >
+                              <Car className="h-4 w-4" /> Admin Dashboard
+                            </Link>
+                          )}
+                        </div>
+
+                        <div className="border-t border-slate-100 dark:border-slate-800">
+                          <button
+                            onClick={() => { setIsProfileMenuOpen(false); logout(); }}
+                            className="flex items-center gap-3 px-4 py-2.5 w-full text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          >
+                            <LogOut className="h-4 w-4" /> Logout
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-6">
