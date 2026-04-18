@@ -19,4 +19,7 @@ router.route('/users/:id')
 
 router.put('/users/:id/kyc', protect, admin, verifyKYC);
 
+router.post('/forgotpassword', forgotPassword);
+router.put('/resetpassword/:resettoken', resetPassword);
+
 module.exports = router;

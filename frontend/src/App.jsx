@@ -13,6 +13,8 @@ const Home = lazy(() => import('./pages/Home'));
 const CarDetail = lazy(() => import('./pages/CarDetail'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const BookingSuccess = lazy(() => import('./pages/BookingSuccess'));
 const MyBookings = lazy(() => import('./pages/MyBookings'));
 const Profile = lazy(() => import('./pages/Profile'));
@@ -77,6 +79,9 @@ const AppContent = () => {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/requirements" element={<RentalRequirements />} />
               <Route path="/unlimited" element={<SubscriptionPage />} />
+              
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/resetpassword/:token" element={<ResetPassword />} />
               
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
               <Route path="/admin/fleet" element={<AdminRoute><AdminFleet /></AdminRoute>} />

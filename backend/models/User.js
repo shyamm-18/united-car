@@ -38,7 +38,9 @@ const userSchema = mongoose.Schema(
       idProofUrl: { type: String, default: null },
       licenseUrl: { type: String, default: null },
       submittedAt: { type: Date, default: null }
-    }
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
   },
   {
     timestamps: true,
