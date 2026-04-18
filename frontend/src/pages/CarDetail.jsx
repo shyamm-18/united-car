@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Users, Settings, Filter, ArrowLeft, CheckCircle, Shield, MapPin, X, CreditCard, Loader2, Calendar, Check } from 'lucide-react';
@@ -216,7 +217,19 @@ const CarDetail = () => {
   }
 
   return (
-    <div className="min-h-screen pb-24 relative">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24 font-inter">
+      <Helmet>
+        <title>{`${car.brand} ${car.model} | Rent Luxury Car in Jaipur & India`}</title>
+        <meta name="description" content={`Rent a ${car.brand} ${car.model} in Jaipur or anywhere in India. ${car.description?.substring(0, 150)}... Book your elite ride with UNITED CAR.`} />
+        <meta name="keywords" content={`${car.brand} ${car.model} rental, rent ${car.model} jaipur, luxury car hire india, ${car.brand} car rental rajasthan`} />
+        
+        {/* Open Graph Tags for Social Sharing */}
+        <meta property="og:title" content={`${car.brand} ${car.model} | UNITED CAR Luxury Rental`} />
+        <meta property="og:description" content={`Drive excellence. Rent the ${car.brand} ${car.model} starting from ₹${car.pricePerDay} per day.`} />
+        <meta property="og:image" content={car.image} />
+      </Helmet>
+
+      {/* Modern High-Impact Header */}
       <div className="fixed inset-0 -z-10 bg-slate-50 dark:bg-slate-950">
         <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
       </div>

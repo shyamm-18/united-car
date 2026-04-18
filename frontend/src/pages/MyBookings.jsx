@@ -86,12 +86,12 @@ const MyBookings = () => {
             <h1 className="text-4xl font-black mb-2 dark:text-white">Booking Center</h1>
             <p className="text-slate-500 font-medium">Manage your active rentals and voyage history.</p>
           </div>
-          <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-3xl border border-slate-200 dark:border-white/5">
+          <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-3xl border border-slate-200 dark:border-white/5 overflow-x-auto no-scrollbar scroll-smooth w-full md:w-auto">
              {['all', 'active', 'cancelled', 'subscriptions'].map((tab) => (
                <button 
                  key={tab}
                  onClick={() => setActiveTab(tab)}
-                 className={`px-6 py-2.5 rounded-2xl font-bold text-sm transition-all uppercase tracking-tighter ${activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}
+                 className={`px-5 sm:px-6 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all uppercase tracking-tighter shrink-0 ${activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}
                >
                  {tab}
                </button>

@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
@@ -8,7 +9,6 @@ import Contact from './Contact';
 import RecommendationSection from '../components/cars/RecommendationSection';
 import ImpactTicker from '../components/common/ImpactTicker';
 import AICarFinder from '../components/cars/AICarFinder';
-
 import TopRatedCars from '../components/cars/TopRatedCars';
 
 const Home = () => {
@@ -19,6 +19,11 @@ const Home = () => {
 
   return (
     <div className="w-full">
+      <Helmet>
+        <title>UNITED CAR | Luxury Car Rental India & Jaipur</title>
+        <meta name="description" content="Premium car rental services in Jaipur and across India. Experience luxury SUVs, sports cars, and elite self-drive rentals with UNITED CAR." />
+        <meta name="keywords" content="car rental jaipur, luxury cars india, self drive car rental rajasthan, thar for rent jaipur" />
+      </Helmet>
       {/* Hero Section */}
       <section id="hero" className="relative h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
