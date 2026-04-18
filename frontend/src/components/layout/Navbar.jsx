@@ -204,114 +204,56 @@ const Navbar = () => {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="md:hidden fixed inset-x-0 top-20 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 z-40 overflow-y-auto"
           >
-            <div className="flex flex-col p-6 space-y-6 text-center pb-12">
-              <Link onClick={() => setIsMobileMenuOpen(false)} to="/" className="text-xl font-bold dark:text-white">{t('nav.home')}</Link>
-              <a onClick={() => setIsMobileMenuOpen(false)} href="/#fleet" className="text-xl font-bold dark:text-white">{t('nav.fleet')}</a>
-              <Link onClick={() => setIsMobileMenuOpen(false)} to="/unlimited" className="text-xl font-bold dark:text-white">{t('nav.unlimited')}</Link>
-              {user?.email === 'arebhai09@gmail.com' && (
-                <Link 
-                  onClick={() => setIsMobileMenuOpen(false)} 
-                  to="/admin"
-                  className="text-xl font-black text-blue-600 uppercase tracking-widest block bg-blue-50 dark:bg-blue-900/20 py-3 rounded-2xl"
-                >
-                  Admin System
-                </Link>
-              )}
-              
-              <hr className="border-slate-200 dark:border-white/10" />
+            <div className="flex flex-col p-6 space-y-2 pb-12">
+              {/* Main Nav Links — same style */}
+              {[
+                { label: t('nav.home'), to: '/' },
+                { label: t('nav.fleet'), to: '/#fleet', isAnchor: true },
+                { label: t('nav.unlimited'), to: '/unlimited' },
+                ...(user ? [{ label: 'Profile', to: '/profile' }] : []),
+                ...(user?.email === 'arebhai09@gmail.com' ? [{ label: 'Admin', to: '/admin', isAdmin: true }] : []),
+              ].map((item) => (
+                item.isAnchor ? (
+                  <a
+                    key={item.label}
+                    href={item.to}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xl font-bold dark:text-white py-3 border-b border-slate-100 dark:border-slate-800"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`text-xl font-bold py-3 border-b border-slate-100 dark:border-slate-800 ${item.isAdmin ? 'text-blue-600' : 'dark:text-white'}`}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              ))}
 
-              {user ? (
-                <div className="flex flex-col space-y-2">
-                  {/* Profile Card */}
-                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
-                    {/* User Header */}
-                    <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-600 to-blue-700">
-                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center shrink-0">
-                        <User className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-extrabold text-white truncate">{user.name}</p>
-                        <p className="text-[11px] text-blue-100 truncate">{user.email}</p>
-                      </div>
-                      {user.kycStatus === 'approved' ? (
-                        <span className="text-[10px] font-black bg-green-500 text-white px-2 py-0.5 rounded-full uppercase tracking-widest shrink-0">✓ Verified</span>
-                      ) : user.kycStatus === 'pending' ? (
-                        <span className="text-[10px] font-black bg-yellow-500 text-white px-2 py-0.5 rounded-full uppercase tracking-widest shrink-0">Pending</span>
-                      ) : (
-                        <span className="text-[10px] font-black bg-white/20 text-white px-2 py-0.5 rounded-full uppercase tracking-widest shrink-0">Unverified</span>
-                      )}
-                    </div>
-
-                    {/* Menu Items */}
-                    <Link
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      to="/my-bookings"
-                      className="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700"
-                    >
-                      <div className="flex items-center gap-3">
-                        <CalendarDays className="h-5 w-5 text-blue-500" />
-                        <span className="font-semibold text-slate-800 dark:text-white">My Reservations</span>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-slate-400" />
+              {/* Auth Buttons or Logout */}
+              <div className="pt-4">
+                {user ? (
+                  <button
+                    onClick={() => { setIsMobileMenuOpen(false); logout(); }}
+                    className="w-full py-4 rounded-2xl bg-red-50 dark:bg-red-900/20 text-red-500 font-bold text-lg flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="h-5 w-5" /> Logout
+                  </button>
+                ) : (
+                  <div className="flex flex-col space-y-4">
+                    <Link onClick={() => setIsMobileMenuOpen(false)} to="/login" className="py-4 rounded-2xl bg-slate-100 dark:bg-white/5 text-lg font-bold dark:text-white text-center">
+                      {t('nav.login')}
                     </Link>
-
-                    <Link
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      to="/profile#kyc"
-                      className="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700"
-                    >
-                      <div className="flex items-center gap-3">
-                        <ShieldCheck className="h-5 w-5 text-green-500" />
-                        <span className="font-semibold text-slate-800 dark:text-white">Identity Verification</span>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-slate-400" />
+                    <Link onClick={() => setIsMobileMenuOpen(false)} to="/register" className="py-4 rounded-2xl bg-blue-600 text-lg font-black text-white text-center shadow-xl shadow-blue-500/20">
+                      {t('nav.register')}
                     </Link>
-
-                    <Link
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      to="/profile"
-                      className="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Settings className="h-5 w-5 text-slate-500" />
-                        <span className="font-semibold text-slate-800 dark:text-white">Account Settings</span>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-slate-400" />
-                    </Link>
-
-                    {user.role === 'admin' && user.email === 'arebhai09@gmail.com' && (
-                      <Link
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        to="/admin"
-                        className="flex items-center justify-between px-4 py-3.5 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors border-b border-slate-100 dark:border-slate-700"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Car className="h-5 w-5 text-blue-600" />
-                          <span className="font-bold text-blue-600">Admin Dashboard</span>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-blue-400" />
-                      </Link>
-                    )}
-
-                    <button
-                      onClick={() => { setIsMobileMenuOpen(false); logout(); }}
-                      className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
-                    >
-                      <LogOut className="h-5 w-5 text-red-500" />
-                      <span className="font-semibold text-red-500">Logout</span>
-                    </button>
                   </div>
-                </div>
-              ) : (
-                <div className="flex flex-col space-y-4 pt-4">
-                  <Link onClick={() => setIsMobileMenuOpen(false)} to="/login" className="py-4 rounded-2xl bg-slate-100 dark:bg-white/5 text-lg font-bold dark:text-white">
-                    {t('nav.login')}
-                  </Link>
-                  <Link onClick={() => setIsMobileMenuOpen(false)} to="/register" className="py-4 rounded-2xl bg-blue-600 text-lg font-black text-white px-8 shadow-xl shadow-blue-500/20">
-                    {t('nav.register')}
-                  </Link>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </motion.div>
         )}
