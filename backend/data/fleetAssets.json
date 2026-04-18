@@ -1,0 +1,90 @@
+[
+  {
+    "brand": "Mahindra",
+    "model": "Thar",
+    "mainImage": "/uploads/ai_thar_black_1776494598594.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/thar.png" },
+      { "category": "Interior", "url": "/uploads/thar_interior.png" },
+      { "category": "Detail", "url": "/uploads/thar_detail.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "Toyota",
+    "model": "Fortuner",
+    "mainImage": "/uploads/ai_fortuner_white_1776494616355.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/fortuner.png" },
+      { "category": "Interior", "url": "/uploads/fortuner_interior.png" },
+      { "category": "Detail", "url": "/uploads/fortuner_detail.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "FRONX",
+    "model": "2025",
+    "mainImage": "/uploads/ai_fronx_blue_1776494682552.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/fronx.png" },
+      { "category": "Interior", "url": "/uploads/fronx_interior.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "GLANZA",
+    "model": "2025",
+    "mainImage": "/uploads/ai_glanza_silver_1776494704888.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/glanza.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "SCORPIO N",
+    "model": "2025",
+    "mainImage": "/uploads/ai_scorpio_n_white_1776494642685.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/scorpio_n.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "SCORPIO CLASSIC",
+    "model": "2025",
+    "mainImage": "/uploads/scorpio_classic.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/scorpio_classic.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "THAR ROXX",
+    "model": "2025",
+    "mainImage": "/uploads/ai_thar_roxx_green_1776494663931.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/thar_roxx.png" },
+      { "category": "Interior", "url": "/uploads/thar_interior.png" },
+      { "category": "Detail", "url": "/uploads/thar_detail.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "Alto",
+    "model": "2022",
+    "mainImage": "/uploads/ai_alto_blue_1776494722136.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/alto.png" }
+    ],
+    "images360": []
+  },
+  {
+    "brand": "Swift",
+    "model": "2025",
+    "mainImage": "/uploads/ai_swift_red_1776494576134.png",
+    "gallery": [
+      { "category": "Exterior", "url": "/uploads/swift.png" }
+    ],
+    "images360": []
+  }
+]
