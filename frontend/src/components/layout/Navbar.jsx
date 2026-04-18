@@ -218,7 +218,7 @@ const Navbar = () => {
                     key={item.label}
                     href={item.to}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xl font-bold dark:text-white py-3 border-b border-slate-100 dark:border-slate-800"
+                    className="text-xl font-bold dark:text-white py-3"
                   >
                     {item.label}
                   </a>
@@ -227,7 +227,7 @@ const Navbar = () => {
                     key={item.label}
                     to={item.to}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`text-xl font-bold py-3 border-b border-slate-100 dark:border-slate-800 ${item.isAdmin ? 'text-blue-600' : 'dark:text-white'}`}
+                    className={`text-xl font-bold py-3 ${item.isAdmin ? 'text-blue-600' : 'dark:text-white'}`}
                   >
                     {item.label}
                   </Link>

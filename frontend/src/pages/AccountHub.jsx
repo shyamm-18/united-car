@@ -3,12 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import {
-  User, CalendarDays, Settings, ShieldCheck,
-  LogOut, ChevronRight, Car
+  CalendarDays, Settings, ShieldCheck,
+  ChevronRight, Car
 } from 'lucide-react';
 
 const AccountHub = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   if (!user) {
@@ -31,21 +31,21 @@ const AccountHub = () => {
       label: 'My Reservations',
       description: 'View and manage all your bookings',
       to: '/my-bookings',
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
+      iconBg: 'bg-blue-50 dark:bg-blue-900/30',
     },
     {
       icon: <Settings className="h-6 w-6 text-slate-500" />,
       label: 'Account Settings',
       description: 'Update your name, email and password',
       to: '/profile/settings',
-      bg: 'bg-slate-50 dark:bg-slate-800/50',
+      iconBg: 'bg-slate-100 dark:bg-slate-700',
     },
     {
       icon: <ShieldCheck className="h-6 w-6 text-green-500" />,
       label: 'Identity Verification',
       description: 'Submit your Aadhar Card and Driving License',
       to: '/profile/kyc',
-      bg: 'bg-green-50 dark:bg-green-900/20',
+      iconBg: 'bg-green-50 dark:bg-green-900/30',
       badge: user.kycStatus !== 'verified' ? badge : null,
     },
     ...(user.role === 'admin' && user.email === 'arebhai09@gmail.com' ? [{
@@ -53,7 +53,7 @@ const AccountHub = () => {
       label: 'Admin Dashboard',
       description: 'Manage fleet, users, bookings and system',
       to: '/admin',
-      bg: 'bg-blue-50 dark:bg-blue-900/20',
+      iconBg: 'bg-blue-50 dark:bg-blue-900/30',
     }] : []),
   ];
 
@@ -75,7 +75,7 @@ const AccountHub = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-[2rem] overflow-hidden shadow-2xl mb-8"
+          className="rounded-[2rem] overflow-hidden shadow-2xl mb-6"
         >
           <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 px-8 py-10 text-white">
             <div className="flex items-center gap-5">
@@ -108,9 +108,9 @@ const AccountHub = () => {
             <motion.div key={item.label} variants={itemVariants}>
               <Link
                 to={item.to}
-                className={`flex items-center gap-4 p-5 rounded-2xl ${item.bg} border border-white/50 dark:border-slate-700 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 group`}
+                className="flex items-center gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group"
               >
-                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm shrink-0">
+                <div className={`p-3 rounded-xl shrink-0 ${item.iconBg}`}>
                   {item.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -124,27 +124,10 @@ const AccountHub = () => {
                   </div>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{item.description}</p>
                 </div>
-                <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors shrink-0" />
+                <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-blue-500 transition-colors shrink-0" />
               </Link>
             </motion.div>
           ))}
-
-          {/* Logout */}
-          <motion.div variants={itemVariants}>
-            <button
-              onClick={() => { logout(); navigate('/login'); }}
-              className="w-full flex items-center gap-4 p-5 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 group"
-            >
-              <div className="p-3 bg-white dark:bg-slate-900 rounded-xl shadow-sm shrink-0">
-                <LogOut className="h-6 w-6 text-red-500" />
-              </div>
-              <div className="flex-1 text-left min-w-0">
-                <p className="font-bold text-red-500">Logout</p>
-                <p className="text-sm text-red-400/70 mt-0.5">Sign out of your account</p>
-              </div>
-              <ChevronRight className="h-5 w-5 text-red-300 group-hover:text-red-500 transition-colors shrink-0" />
-            </button>
-          </motion.div>
         </motion.div>
 
       </div>
