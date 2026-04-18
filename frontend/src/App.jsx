@@ -58,11 +58,15 @@ class ErrorBoundary extends React.Component {
 const AppContent = () => {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
+  const isAuthPath = ['/login', '/register', '/forgot-password'].includes(location.pathname) || 
+                     location.pathname.startsWith('/resetpassword');
+
+  const hideLayout = isAdminPath || isAuthPath;
 
   return (
     <div className="min-h-screen flex flex-col font-inter bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
-      {!isAdminPath && <Navbar />}
-      <main className={`flex-grow ${!isAdminPath ? 'pt-20' : ''}`}>
+      {!hideLayout && <Navbar />}
+      <main className={`flex-grow ${!hideLayout ? 'pt-20' : ''}`}>
         <ErrorBoundary>
           <Suspense fallback={<SkeletonLoader />}>
             <Routes>
@@ -97,8 +101,8 @@ const AppContent = () => {
           </Suspense>
         </ErrorBoundary>
       </main>
-      {!isAdminPath && <Footer />}
-      {!isAdminPath && <LuxeChatbot />}
+      {!hideLayout && <Footer />}
+      {!hideLayout && <LuxeChatbot />}
     </div>
   );
 };
