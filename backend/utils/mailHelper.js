@@ -51,14 +51,16 @@ const sendEmail = async (to, subject, html, attachments = []) => {
         });
 
         if (info.messageId !== 'mock-id' && !process.env.EMAIL_USER) {
+            info.previewUrl = nodemailer.getTestMessageUrl(info);
             console.log("Message sent (Ethereal): %s", info.messageId);
-            console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            console.log("Preview URL: %s", info.previewUrl);
         } else {
             console.log("Email sent successfully");
         }
         return info;
     } catch (error) {
         console.error("Email sending failed", error);
+        throw error;
     }
 };
 

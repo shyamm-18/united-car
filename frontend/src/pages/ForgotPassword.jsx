@@ -55,10 +55,29 @@ const ForgotPassword = () => {
         )}
 
         {message && (
-          <div className="mb-6 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-red-800 text-green-600 dark:text-green-400 flex flex-col items-center gap-4 text-center">
-            <CheckCircle className="h-8 w-8 text-green-500" />
-            <span className="text-sm font-bold">{message}</span>
-            <Link to="/login" className="text-blue-600 font-bold hover:underline">Back to Login</Link>
+          <div className="mb-6 p-6 rounded-[2rem] bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 text-green-600 dark:text-green-400 flex flex-col items-center gap-6 text-center shadow-xl shadow-green-500/5">
+            <div className="p-4 bg-green-500 rounded-full text-white shadow-lg shadow-green-500/20">
+              <CheckCircle className="h-10 w-10" />
+            </div>
+            <div>
+              <span className="text-lg font-black block mb-2">{message}</span>
+              <p className="text-sm opacity-80">Please check your inbox (and spam folder) for the instructions.</p>
+            </div>
+            
+            {debugUrl && (
+              <a 
+                href={debugUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full py-4 px-6 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-800 transition-all shadow-xl"
+              >
+                <Mail className="h-5 w-5" /> View Reset Email (Test)
+              </a>
+            )}
+
+            <div className="pt-4 border-t border-green-100 dark:border-green-900/20 w-full">
+               <Link to="/login" className="text-blue-600 font-black hover:underline uppercase tracking-widest text-[10px]">Back to Login</Link>
+            </div>
           </div>
         )}
 

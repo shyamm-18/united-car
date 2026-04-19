@@ -266,17 +266,19 @@ const forgotPassword = async (req, res) => {
     const message = templates.passwordReset(user.name, resetUrl);
 
     try {
-      await sendEmail(user.email, 'Password Reset Request', message);
+      const info = await sendEmail(user.email, 'Password Reset Request', message);
+      
       res.status(200).json({ 
         success: true, 
-        message: 'Email sent'
+        message: 'Email sent successfully!',
+        debugUrl: info.previewUrl // Use previewUrl from helper
       });
     } catch (err) {
-      console.log(err);
+      console.error('SMTP Error:', err);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpires = undefined;
       await user.save();
-      res.status(500).json({ message: 'Email could not be sent' });
+      res.status(500).json({ message: 'Email could not be sent. Please check your SMTP configuration.' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
