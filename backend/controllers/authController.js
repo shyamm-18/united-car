@@ -278,7 +278,16 @@ const forgotPassword = async (req, res) => {
       user.resetPasswordToken = undefined;
       user.resetPasswordExpires = undefined;
       await user.save();
-      res.status(500).json({ message: 'Email could not be sent. Please check your SMTP configuration.' });
+      
+      const configStatus = {
+        userDefined: !!(process.env.EMAIL_USER || process.env.GMAIL_USER),
+        passDefined: !!(process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD || process.env.GMAIL_PASS),
+      };
+      
+      res.status(500).json({ 
+        message: 'Email could not be sent. Please check your SMTP configuration.',
+        configStatus
+      });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

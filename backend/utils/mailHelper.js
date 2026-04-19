@@ -12,7 +12,9 @@ const createTransporter = async () => {
     if (user && pass) {
         console.log("📨 Using Real SMTP (Gmail/Custom) for emails");
         return nodemailer.createTransport({
-            service: process.env.EMAIL_SERVICE || 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: user,
                 pass: pass,

@@ -29,6 +29,16 @@ initCronJobs();
 
 const app = express();
 
+// Diagnostic route for SMTP (Masked) - TOP
+app.get('/api/health/env-check', (req, res) => {
+  res.json({
+    email_user_defined: !!(process.env.EMAIL_USER || process.env.GMAIL_USER),
+    email_pass_defined: !!(process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD || process.env.GMAIL_PASS),
+    env_keys: Object.keys(process.env).filter(key => key.includes('EMAIL') || key.includes('GMAIL') || key.includes('JWT')),
+    node_env: process.env.NODE_ENV
+  });
+});
+
 // Speed Optimization: Gzip Compression
 app.use(compression());
 
@@ -62,6 +72,11 @@ app.use(express.static(frontendPath, {
   maxAge: '1d',
   etag: true
 }));
+
+// API Health Check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'up', environment: process.env.NODE_ENV, timestamp: new Date() });
+});
 
 // API Health Check
 app.get('/api/health', (req, res) => {
