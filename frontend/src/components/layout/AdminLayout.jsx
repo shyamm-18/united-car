@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Car, Calendar, Users, Settings, LogOut, ArrowLeft, Navigation, Shield, Activity, Bell } from 'lucide-react';
+import { LayoutDashboard, Car, Calendar, Users, Settings, LogOut, ArrowLeft, Navigation, Shield, Activity, Bell, Ticket } from 'lucide-react';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -11,6 +11,7 @@ const AdminLayout = ({ children }) => {
   const menuItems = [
     { title: 'Command Center', path: '/admin', icon: <LayoutDashboard className="h-5 w-5" /> },
     { title: 'Fleet Logistics', path: '/admin/fleet', icon: <Car className="h-5 w-5" /> },
+    { title: 'Promo Protocol', path: '/admin/coupons', icon: <Ticket className="h-5 w-5" /> },
     { title: 'Global Tracking', path: '/admin/tracking', icon: <Navigation className="h-5 w-5" /> },
     { title: 'Live Map Telemetry', path: '/admin/map', icon: <Activity className="h-5 w-5" /> },
     { title: 'Reservations', path: '/admin/bookings', icon: <Calendar className="h-5 w-5" /> },

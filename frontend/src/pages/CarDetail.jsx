@@ -14,7 +14,7 @@ import AddonSelector from '../components/cars/AddonSelector';
 const CarDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const { t } = useTranslation();
   
   const [car, setCar] = useState(null);
@@ -33,10 +33,61 @@ const CarDetail = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedAddons, setSelectedAddons] = useState([]);
   const [surgeApplied, setSurgeApplied] = useState(false);
+
+  // Coupon & Wallet States
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null); // { code, discountAmount }
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [useWallet, setUseWallet] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
   
   // Airbnb Calendar States
   const [bookedDates, setBookedDates] = useState([]);
   const [isOverlapping, setIsOverlapping] = useState(false);
+
+  // Fetch Wallet Balance
+  const fetchWallet = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/wallet`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setWalletBalance(data.walletBalance);
+      }
+    } catch (err) { console.error('Wallet fetch failed'); }
+  }, [token]);
+
+  useEffect(() => {
+    if (user) fetchWallet();
+  }, [user, fetchWallet]);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode || !token) return;
+    setIsValidatingCoupon(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/coupons/validate`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ code: couponCode, bookingValue: totalPrice })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAppliedCoupon({ code: data.couponCode, discountAmount: data.discountAmount });
+        alert(`Success! ₹${data.discountAmount} discount applied.`);
+      } else {
+        alert(data.message || 'Invalid coupon');
+      }
+    } catch (err) {
+      alert('Failed to validate coupon');
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
 
   // DEFINED AT TOP SCOPE TO PREVENT ReferenceError
   const fetchCar = useCallback(async () => {
@@ -98,12 +149,15 @@ const CarDetail = () => {
         let calculatedBasePrice = 0;
         let hasSurge = false;
         
-        // Surge Pricing Algorithm: +20% for Saturday/Sunday
-        for (let i = 0; i < days; i++) {
+        // Calculate days (minimum 1 day for any duration)
+        const daysCount = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        setTotalDays(daysCount);
+
+        for (let i = 0; i < daysCount; i++) {
           const currentDate = new Date(start.getTime() + (i * 24 * 60 * 60 * 1000));
           const dayOfWeek = currentDate.getDay();
           
-          if (dayOfWeek === 0 || dayOfWeek === 6) { // Sunday or Saturday
+          if (dayOfWeek === 0 || dayOfWeek === 6) { 
              calculatedBasePrice += (car.pricePerDay || car.price) * 1.2;
              hasSurge = true;
           } else {
@@ -114,17 +168,17 @@ const CarDetail = () => {
         setSurgeApplied(hasSurge);
 
         let addonsPrice = selectedAddons.reduce((acc, addon) => {
-          return acc + (addon.type === 'per_day' ? addon.price * days : addon.price);
+          return acc + (addon.type === 'per_day' ? addon.price * daysCount : addon.price);
         }, 0);
         
         setTotalPrice(Math.round(calculatedBasePrice + addonsPrice));
         
-        // Airbnb Validation Logic
+        // Precise Overlap Validation
         let overlap = false;
         bookedDates.forEach(b => {
-           const bX = new Date(b.startDate).getTime();
-           const bY = new Date(b.endDate).getTime();
-           if (start.getTime() < bY && end.getTime() > bX) {
+           const bStart = new Date(b.startDate).getTime();
+           const bEnd = new Date(b.endDate).getTime();
+           if (start.getTime() < bEnd && end.getTime() > bStart) {
               overlap = true;
            }
         });
@@ -164,7 +218,9 @@ const CarDetail = () => {
       totalPrice,
       pickupLocation,
       addons: selectedAddons,
-      paymentMethod: method
+      paymentMethod: method,
+      couponCode: appliedCoupon?.code || null,
+      useWallet: useWallet
     };
 
     try {
@@ -295,14 +351,45 @@ const CarDetail = () => {
 
           <div className="lg:col-span-1">
             <div className="sticky top-28 glass rounded-[2.5rem] p-8 border border-white/40 dark:border-slate-800/40 shadow-2xl bg-white/70 dark:bg-slate-900/70">
+              {/* Coupon Section */}
+              <div className="mb-6 space-y-3">
+                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Promo Code</label>
+                 <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      placeholder="e.g. READY2DRIVE"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                      className="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold dark:text-white"
+                    />
+                    <button 
+                      onClick={handleApplyCoupon}
+                      disabled={isValidatingCoupon || !couponCode}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all disabled:opacity-50"
+                    >
+                      {isValidatingCoupon ? '...' : 'Apply'}
+                    </button>
+                 </div>
+                 {appliedCoupon && (
+                   <div className="text-[10px] font-bold text-green-500 ml-1 flex items-center gap-1 animate-bounce">
+                      <CheckCircle className="h-3 w-3" /> Offer Applied: ₹{appliedCoupon.discountAmount} Off
+                   </div>
+                 )}
+              </div>
+
               <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl mb-8">
                  <button onClick={() => setIsMonthly(false)} className={`flex-grow py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${!isMonthly ? 'bg-white dark:bg-slate-700 shadow-sm dark:text-white' : 'text-slate-500'}`}> DAILY </button>
                  <button onClick={() => setIsMonthly(true)} className={`flex-grow py-2.5 rounded-xl text-xs font-black tracking-widest transition-all ${isMonthly ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500'}`}> MONTHLY </button>
               </div>
 
               <div className="mb-8 relative">
-                  <span className="text-4xl font-black dark:text-white">₹{(isMonthly ? (car?.monthlyPrice || 45000) : (totalPrice || car?.pricePerDay || car?.price))?.toLocaleString()}</span>
+                  <span className="text-4xl font-black dark:text-white">₹{(isMonthly ? (car?.monthlyPrice || 45000) : (totalPrice - (appliedCoupon?.discountAmount || 0)))?.toLocaleString()}</span>
                   <span className="text-slate-500 font-medium ml-2">/ {isMonthly ? 'month' : (totalDays > 0 ? 'total' : 'day')}</span>
+                  {appliedCoupon && (
+                    <div className="text-[10px] font-bold text-green-500 mt-1 italic animate-pulse">
+                       Saved ₹{appliedCoupon.discountAmount.toLocaleString()} with {appliedCoupon.code}
+                    </div>
+                  )}
                   {surgeApplied && !isMonthly && (
                     <div className="absolute -top-3 -right-2 bg-red-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shadow-lg shadow-red-500/40 animate-pulse">
                       High Demand Surge
@@ -329,24 +416,52 @@ const CarDetail = () => {
                        <option value="Sikar - Premium Lounge">Sikar - Premium Lounge</option>
                      </select>
                    </div>
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                       <Calendar className="h-3 w-3" /> Start Date
-                     </label>
-                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white" />
-                   </div>
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                       <Calendar className="h-3 w-3 text-blue-500" /> End Date
-                     </label>
-                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white" />
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <Calendar className="h-3 w-3" /> Pickup Date & Time
+                      </label>
+                      <input 
+                        type="datetime-local" 
+                        value={startDate} 
+                        onChange={(e) => setStartDate(e.target.value)} 
+                        className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white" 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                        <Calendar className="h-3 w-3 text-blue-500" /> Drop-off Date & Time
+                      </label>
+                      <input 
+                        type="datetime-local" 
+                        value={endDate} 
+                        onChange={(e) => setEndDate(e.target.value)} 
+                        className="w-full px-4 py-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold dark:text-white" 
+                      />
+                    </div>
+                 </div>
+              )}
+
+              {/* Fleet Schedule Visibility */}
+              {!isMonthly && bookedDates.length > 0 && (
+                <div className="mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/50 dark:border-slate-700/50">
+                   <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div> Reserved Slots
+                   </h4>
+                   <div className="space-y-2 max-h-24 overflow-y-auto custom-scrollbar">
+                      {bookedDates.map((booking, idx) => (
+                         <div key={idx} className="flex justify-between items-center text-[10px] font-bold text-slate-500 italic">
+                            <span>{new Date(booking.startDate).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            <span className="mx-2">—</span>
+                            <span>{new Date(booking.endDate).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                         </div>
+                      ))}
                    </div>
                 </div>
               )}
 
               {isOverlapping && (
-                 <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold p-4 rounded-xl flex items-center justify-center gap-2">
-                    <X className="h-4 w-4" /> This vehicle is already booked during these dates.
+                 <div className="mb-4 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest p-4 rounded-xl flex items-center justify-center gap-2 text-center">
+                    <X className="h-4 w-4" /> Conflict Detected: Already Booked for these hours.
                  </div>
               )}
 
@@ -394,6 +509,28 @@ const CarDetail = () => {
                  {!paymentMethod ? (
                    <>
                      <h2 className="text-2xl font-black mb-6 dark:text-white">Secure Checkout</h2>
+                     
+                     {/* Wallet Payment Toggle */}
+                     <div 
+                        onClick={() => setUseWallet(!useWallet)}
+                        className={`mb-6 p-6 rounded-3xl border-2 transition-all cursor-pointer group ${useWallet ? 'border-blue-500 bg-blue-500/5' : 'border-slate-100 dark:border-slate-800'}`}
+                     >
+                        <div className="flex items-center gap-4">
+                           <div className={`p-4 rounded-2xl ${useWallet ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'} transition-colors group-hover:scale-110`}>
+                              <Wallet className="h-6 w-6" />
+                           </div>
+                           <div className="flex-1">
+                              <div className="flex justify-between items-center">
+                                 <p className="font-bold dark:text-white uppercase tracking-tight text-xs">United Wallet</p>
+                                 <div className={`w-10 h-6 rounded-full relative transition-colors ${useWallet ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${useWallet ? 'right-1' : 'left-1'}`}></div>
+                                 </div>
+                              </div>
+                              <p className="text-[10px] text-slate-500 font-medium">Balance: ₹{walletBalance.toLocaleString()}</p>
+                           </div>
+                        </div>
+                     </div>
+
                      <div className="space-y-4 mb-8">
                         <button 
                           onClick={() => setPaymentMethod('pickup')}

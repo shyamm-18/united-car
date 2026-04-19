@@ -1,6 +1,7 @@
 const Booking = require('../models/Booking');
 const Car = require('../models/Car');
 const User = require('../models/User');
+const Coupon = require('../models/Coupon');
 const { createNotification } = require('./notificationController');
 const { sendEmail, templates } = require('../utils/mailHelper');
 const { generateRentalAgreement } = require('../utils/pdfHelper');
@@ -11,13 +12,54 @@ const { PassThrough } = require('stream');
 // @access  Private
 const addBookingItems = async (req, res) => {
   try {
-    const { carId, startDate, endDate, totalPrice, pickupLocation, addons } = req.body;
+    const { carId, startDate, endDate, totalPrice, pickupLocation, addons, couponCode, useWallet } = req.body;
 
     if (!carId || !startDate || !endDate || !totalPrice || !pickupLocation) {
       return res.status(400).json({ message: 'Missing required booking information' });
     }
 
-    // 0. Airbnb-style Live Calendar Constraint (Overlap Prevention)
+    // 0. Manage Reductions (Coupons & Wallet)
+    let finalAmount = totalPrice;
+    let discountAmount = 0;
+    let walletUsed = 0;
+
+    // A. Handle Coupon
+    if (couponCode) {
+      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase(), isActive: true });
+      if (coupon) {
+        // Verify eligibility (simple check for now, can be expanded)
+        if (new Date(coupon.expiryDate) >= new Date()) {
+           if (coupon.discountType === 'percentage') {
+             discountAmount = (totalPrice * coupon.discountValue) / 100;
+           } else {
+             discountAmount = coupon.discountValue;
+           }
+           finalAmount -= discountAmount;
+           
+           // Mark coupon as used by this user
+           coupon.usedBy.push({ user: req.user._id });
+           await coupon.save();
+        }
+      }
+    }
+
+    // B. Handle Wallet
+    if (useWallet) {
+      const user = await User.findById(req.user._id);
+      if (user.walletBalance > 0) {
+        walletUsed = Math.min(user.walletBalance, finalAmount);
+        user.walletBalance -= walletUsed;
+        user.walletTransactions.push({
+          amount: walletUsed,
+          type: 'debit',
+          description: `Booking payment for car rental`
+        });
+        await user.save();
+        finalAmount -= walletUsed;
+      }
+    }
+
+    // 0.5. Airbnb-style Live Calendar Constraint (Overlap Prevention)
     const existingBooking = await Booking.findOne({
       car: carId,
       status: { $ne: 'cancelled' },
@@ -37,9 +79,13 @@ const addBookingItems = async (req, res) => {
       car: carId,
       startDate,
       endDate,
-      totalPrice,
+      totalPrice, // Original price before wallet/coupon
       pickupLocation,
       addons,
+      couponCode: couponCode || null,
+      discountApplied: discountAmount,
+      walletAmountApplied: walletUsed,
+      finalPaidAmount: finalAmount // Amount left to be paid via gateway (or 0 if fully paid)
     });
 
     const createdBooking = await booking.save();

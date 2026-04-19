@@ -15,6 +15,7 @@ const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const couponRoutes = require('./routes/couponRoutes');
 const compression = require('compression');
 const { initCronJobs } = require('./utils/cronJobs');
 const path = require('path');
@@ -59,6 +60,7 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/coupons', couponRoutes);
 
 // Static uploads folder with Cache Control (7 days)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {

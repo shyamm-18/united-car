@@ -364,4 +364,36 @@ const subscribeUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC, forgotPassword, resetPassword, getVapidPublicKey, subscribeUser };
+// @desc    Add funds to wallet (Mock)
+// @route   POST /api/auth/wallet/add
+// @access  Private
+const addWalletFunds = async (req, res) => {
+  const { amount } = req.body;
+  try {
+    const user = await User.findById(req.user._id);
+    user.walletBalance += Number(amount);
+    user.walletTransactions.push({
+      amount: Number(amount),
+      type: 'credit',
+      description: 'Wallet Top-up (Mock Payment)'
+    });
+    await user.save();
+    res.json({ success: true, balance: user.walletBalance });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get wallet balance and history
+// @route   GET /api/auth/wallet
+// @access  Private
+const getWalletHistory = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('walletBalance walletTransactions');
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC, forgotPassword, resetPassword, getVapidPublicKey, subscribeUser, addWalletFunds, getWalletHistory };

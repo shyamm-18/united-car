@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC, forgotPassword, resetPassword, getVapidPublicKey, subscribeUser } = require('../controllers/authController');
+const { registerUser, loginUser, getUserProfile, updateUserProfile, getUsers, deleteUser, submitKYC, verifyKYC, forgotPassword, resetPassword, getVapidPublicKey, subscribeUser, addWalletFunds, getWalletHistory } = require('../controllers/authController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.post('/register', registerUser);
@@ -25,5 +25,9 @@ router.put('/resetpassword/:resettoken', resetPassword);
 // Push Notification Routes
 router.get('/vapid-key', getVapidPublicKey);
 router.post('/subscribe', protect, subscribeUser);
+
+// Wallet Routes
+router.get('/wallet', protect, getWalletHistory);
+router.post('/wallet/add', protect, addWalletFunds);
 
 module.exports = router;

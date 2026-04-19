@@ -45,7 +45,11 @@ const bookingSchema = mongoose.Schema(
       startKm: { type: Number, default: null },
       endKm: { type: Number, default: null },
       totalKm: { type: Number, default: null }
-    }
+    },
+    couponCode: { type: String, default: null },
+    discountApplied: { type: Number, default: 0 },
+    walletAmountApplied: { type: Number, default: 0 },
+    finalPaidAmount: { type: Number, default: 0 }
   },
   {
     timestamps: true,

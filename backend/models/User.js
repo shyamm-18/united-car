@@ -40,7 +40,19 @@ const userSchema = mongoose.Schema(
       submittedAt: { type: Date, default: null }
     },
     resetPasswordToken: String,
-    resetPasswordExpires: Date
+    resetPasswordExpires: Date,
+    walletBalance: {
+      type: Number,
+      default: 0,
+    },
+    walletTransactions: [
+      {
+        amount: { type: Number, required: true },
+        type: { type: String, enum: ['credit', 'debit'], required: true },
+        description: { type: String, required: true },
+        date: { type: Date, default: Date.now }
+      }
+    ]
   },
   {
     timestamps: true,

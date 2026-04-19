@@ -33,6 +33,7 @@ const AdminUsers = lazy(() => import('./pages/AdminUsers'));
 const AdminFleetTracker = lazy(() => import('./pages/AdminFleetTracker'));
 const AdminConfig = lazy(() => import('./pages/AdminConfig'));
 const AdminMap = lazy(() => import('./pages/AdminMap'));
+const AdminCoupons = lazy(() => import('./pages/AdminCoupons'));
 import AdminRoute from './components/auth/AdminRoute';
 
 // STABLE Error Boundary
@@ -107,6 +108,7 @@ const AppContent = () => {
               <Route path="/admin/tracking" element={<AdminRoute><AdminFleetTracker /></AdminRoute>} />
               <Route path="/admin/map" element={<AdminRoute><AdminMap /></AdminRoute>} />
               <Route path="/admin/config" element={<AdminRoute><AdminConfig /></AdminRoute>} />
+              <Route path="/admin/coupons" element={<AdminRoute><AdminCoupons /></AdminRoute>} />
               
               <Route path="/cars" element={<Navigate to="/#fleet" replace />} />
               <Route path="*" element={<Navigate to="/" replace />} />
