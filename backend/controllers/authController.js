@@ -254,8 +254,8 @@ const forgotPassword = async (req, res) => {
       .update(resetToken)
       .digest('hex');
 
-    // Set expire (10 minutes)
-    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+    // Set expire (1 hour)
+    user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
 
     await user.save();
 
@@ -300,7 +300,7 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
   const resetPasswordToken = crypto
     .createHash('sha256')
-    .update(req.params.resettoken)
+    .update(req.params.resettoken.trim())
     .digest('hex');
 
   const user = await User.findOne({
@@ -309,7 +309,19 @@ const resetPassword = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: 'Invalid token' });
+    // Diagnostic logging to find why user was not found
+    const potentialUser = await User.findOne({ resetPasswordToken });
+    if (potentialUser) {
+        console.error("Password reset failed: Token found but EXPIRED", {
+             expires: potentialUser.resetPasswordExpires,
+             now: new Date()
+        });
+        return res.status(400).json({ message: 'Reset link has expired. Please request a new one.' });
+    }
+    console.error("Password reset failed: Token not found in database", { 
+        hash: resetPasswordToken.substring(0, 10) + '...'
+    });
+    return res.status(400).json({ message: 'Invalid or obsolete reset link' });
   }
 
   // Set new password
