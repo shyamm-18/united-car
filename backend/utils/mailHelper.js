@@ -5,18 +5,22 @@ const nodemailer = require('nodemailer');
 // Use Ethereal for professional development mock if no SMTP provided
 // In production, replace with real SMTP (SendGrid, Gmail, etc.)
 const createTransporter = async () => {
+    const user = process.env.EMAIL_USER || process.env.GMAIL_USER;
+    const pass = process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD || process.env.GMAIL_PASS;
+
     // If real credentials available, use them
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    if (user && pass) {
+        console.log("📨 Using Real SMTP (Gmail/Custom) for emails");
         return nodemailer.createTransport({
             service: process.env.EMAIL_SERVICE || 'gmail',
             auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
+                user: user,
+                pass: pass,
             },
         });
     }
 
-    // For Demo: Use a test account (Ethereal)
+    console.log("🛡️ No real SMTP credentials found. Falling back to Ethereal Test Account.");
     try {
         let testAccount = await nodemailer.createTestAccount();
         return nodemailer.createTransport({
